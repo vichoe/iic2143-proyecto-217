@@ -24,7 +24,7 @@ default: &default
 development:
   <<: *default
   database: iic2143_proyecto_217_development
-  host: localhost
+  #host: localhost
 
 
   # The specified database role being used to connect to PostgreSQL.
@@ -60,7 +60,7 @@ development:
 test:
   <<: *default
   database: iic2143_proyecto_217_test
-  host: localhost
+  #host: localhost
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
