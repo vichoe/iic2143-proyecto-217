@@ -17,12 +17,15 @@ default: &default
   encoding: unicode
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
+  #AGREGADO -> lo quite el localhost
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 
 development:
   <<: *default
   database: iic2143_proyecto_217_development
+  #host: localhost
+
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -57,6 +60,7 @@ development:
 test:
   <<: *default
   database: iic2143_proyecto_217_test
+  #host: localhost
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
