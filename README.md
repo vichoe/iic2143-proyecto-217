@@ -1,6 +1,6 @@
 Se utilizo la configuracion de Rubocop del siguiente link: https://iic2143.github.io/Setup-Guides/guides/tools/rubocop/ 
 
-Render setup: https://www.youtube.com/watch?v=MFTmX-EI-M4 
+LINK DE RENDER: https://two026-2-grupo-217.onrender.com/ 
 
 ### Notas
 Nos daba error al hacer Pull Request en `System Test` y es porque no existía `test/system`.
