@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_23_181231) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_23_181430) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -84,6 +84,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_181231) do
     t.index ["requester_id"], name: "index_exchange_requests_on_requester_id"
   end
 
+  create_table "messages", force: :cascade do |t|
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.bigint "exchange_request_id", null: false
+    t.datetime "read_at"
+    t.bigint "sender_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["exchange_request_id"], name: "index_messages_on_exchange_request_id"
+    t.index ["sender_id"], name: "index_messages_on_sender_id"
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.text "comment"
+    t.datetime "created_at", null: false
+    t.bigint "exchange_request_id", null: false
+    t.bigint "reviewee_id", null: false
+    t.bigint "reviewer_id", null: false
+    t.integer "score", null: false
+    t.datetime "updated_at", null: false
+    t.index ["exchange_request_id", "reviewer_id"], name: "index_reviews_on_exchange_request_id_and_reviewer_id", unique: true
+    t.index ["exchange_request_id"], name: "index_reviews_on_exchange_request_id"
+    t.index ["reviewee_id"], name: "index_reviews_on_reviewee_id"
+    t.index ["reviewer_id"], name: "index_reviews_on_reviewer_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.boolean "admin", default: false, null: false
     t.text "bio"
@@ -108,4 +133,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_181231) do
   add_foreign_key "exchange_requests", "books"
   add_foreign_key "exchange_requests", "books", column: "offered_book_id"
   add_foreign_key "exchange_requests", "users", column: "requester_id"
+  add_foreign_key "messages", "exchange_requests"
+  add_foreign_key "messages", "users", column: "sender_id"
+  add_foreign_key "reviews", "exchange_requests"
+  add_foreign_key "reviews", "users", column: "reviewee_id"
+  add_foreign_key "reviews", "users", column: "reviewer_id"
 end

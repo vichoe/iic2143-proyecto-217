@@ -28,4 +28,9 @@ class UserTest < ActiveSupport::TestCase
     user.suspended_at = Time.current
     assert user.suspended?
   end
+
+  test "average_rating promedia las reseñas recibidas" do
+    assert_in_delta 5.0, users(:beto).average_rating
+    assert_nil users(:carla).average_rating
+  end
 end

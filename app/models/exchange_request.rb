@@ -3,6 +3,9 @@ class ExchangeRequest < ApplicationRecord
   belongs_to :book
   belongs_to :offered_book, class_name: "Book", optional: true
 
+  has_many :messages, dependent: :destroy
+  has_many :reviews, dependent: :destroy
+
   enum :status, { pending: 0, accepted: 1, rejected: 2, cancelled: 3, completed: 4 }, validate: true
 
   validates :message, length: { maximum: 1000 }
