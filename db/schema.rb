@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_23_180716) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_23_180930) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,6 +42,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_180716) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "books", force: :cascade do |t|
+    t.string "author", null: false
+    t.bigint "category_id", null: false
+    t.integer "condition", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "language"
+    t.integer "modality", default: 0, null: false
+    t.integer "published_year"
+    t.string "publisher"
+    t.integer "status", default: 0, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["category_id"], name: "index_books_on_category_id"
+    t.index ["status"], name: "index_books_on_status"
+    t.index ["user_id"], name: "index_books_on_user_id"
+  end
+
   create_table "categories", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
@@ -69,4 +88,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_180716) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "books", "categories"
+  add_foreign_key "books", "users"
 end
