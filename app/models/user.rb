@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_one_attached :avatar
 
   has_many :books, dependent: :destroy
+  has_many :sent_exchange_requests, class_name: "ExchangeRequest", foreign_key: :requester_id, dependent: :destroy
 
   validates :name, presence: true, length: { maximum: 50 }
   validates :bio, length: { maximum: 500 }

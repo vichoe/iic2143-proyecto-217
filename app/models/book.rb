@@ -5,6 +5,9 @@ class Book < ApplicationRecord
   has_one_attached :cover_image
   has_many_attached :photos
 
+  has_many :exchange_requests, dependent: :destroy
+  has_many :offered_in_requests, class_name: "ExchangeRequest", foreign_key: :offered_book_id, dependent: :nullify
+
   # validate: true hace que un valor inválido sea un error de validación en vez de una excepción.
   enum :condition, { brand_new: 0, like_new: 1, good: 2, acceptable: 3 }, validate: true
   enum :modality, { exchange: 0, loan: 1 }, validate: true

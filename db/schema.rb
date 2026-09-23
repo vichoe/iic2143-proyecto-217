@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_23_180930) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_23_181231) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -69,6 +69,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_180930) do
     t.index ["name"], name: "index_categories_on_name", unique: true
   end
 
+  create_table "exchange_requests", force: :cascade do |t|
+    t.bigint "book_id", null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.text "message"
+    t.bigint "offered_book_id"
+    t.bigint "requester_id", null: false
+    t.datetime "responded_at"
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_id"], name: "index_exchange_requests_on_book_id"
+    t.index ["offered_book_id"], name: "index_exchange_requests_on_offered_book_id"
+    t.index ["requester_id"], name: "index_exchange_requests_on_requester_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.boolean "admin", default: false, null: false
     t.text "bio"
@@ -90,4 +105,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_180930) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "books", "categories"
   add_foreign_key "books", "users"
+  add_foreign_key "exchange_requests", "books"
+  add_foreign_key "exchange_requests", "books", column: "offered_book_id"
+  add_foreign_key "exchange_requests", "users", column: "requester_id"
 end
