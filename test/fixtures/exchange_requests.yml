@@ -1,0 +1,15 @@
+# Beto pide El Hobbit (de Ana) y ofrece Dune.
+beto_wants_hobbit:
+  requester: beto
+  book: hobbit
+  offered_book: dune
+  message: Hola, te cambio Dune por El Hobbit
+  status: pending
+
+# Ana pidió prestado Fundación (de Beto) y ya se completó.
+ana_borrowed_foundation:
+  requester: ana
+  book: foundation
+  status: completed
+  responded_at: <%= 3.days.ago %>
+  completed_at: <%= 1.day.ago %>

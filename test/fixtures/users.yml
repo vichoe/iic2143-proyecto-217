@@ -1,12 +1,14 @@
-# nota: este cambio lo hice con ayuda de claude ya que no estoy muy familiarizado con Device
-# se supone que son testeos
-
 ana:
-  nombre: Ana Lectora
+  name: Ana Lectora
   email: ana@example.com
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
 
 beto:
-  nombre: Beto Librero
+  name: Beto Librero
   email: beto@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
+
+carla:
+  name: Carla Curiosa
+  email: carla@example.com
   encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
