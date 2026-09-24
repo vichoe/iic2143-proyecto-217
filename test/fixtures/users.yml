@@ -1,0 +1,14 @@
+ana:
+  name: Ana Lectora
+  email: ana@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
+
+beto:
+  name: Beto Librero
+  email: beto@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>
+
+carla:
+  name: Carla Curiosa
+  email: carla@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, "password123") %>

@@ -1,0 +1,26 @@
+hobbit:
+  user: ana
+  category: fantasy
+  title: El Hobbit
+  author: J. R. R. Tolkien
+  condition: good
+  modality: exchange
+  status: available
+
+dune:
+  user: beto
+  category: science_fiction
+  title: Dune
+  author: Frank Herbert
+  condition: like_new
+  modality: exchange
+  status: available
+
+foundation:
+  user: beto
+  category: science_fiction
+  title: Fundación
+  author: Isaac Asimov
+  condition: acceptable
+  modality: loan
+  status: available
