@@ -1,0 +1,41 @@
+<p><%= link_to "← Volver", root_path %></p>
+
+<h1><%= avatar_for(@user, size: 64) %> <%= @user.name %></h1>
+
+<% if current_user == @user %>
+  <p><em>Este es tu perfil público. Así lo ven los demás.</em></p>
+<% end %>
+
+<% if @user.city.present? %>
+  <p><strong>Ciudad:</strong> <%= @user.city %></p>
+<% end %>
+
+<% if @user.bio.present? %>
+  <%= simple_format @user.bio %>
+<% end %>
+
+<h2>Reputación</h2>
+<% if @user.average_rating %>
+  <p>
+    <%= "★" * @user.average_rating.round %><%= "☆" * (5 - @user.average_rating.round) %>
+    <%= @user.average_rating %> / 5 (<%= @user.received_reviews.count %> reseñas)
+  </p>
+<% else %>
+  <p>Todavía no tiene reseñas.</p>
+<% end %>
+
+<h2>Publicaciones vigentes</h2>
+<% if @books.any? %>
+  <ul>
+    <% @books.each do |book| %>
+      <li>
+        <% if book.cover_image.attached? %>
+          <%= image_tag book.cover_image, alt: book.title, style: "max-width: 50px; vertical-align: middle;" %>
+        <% end %>
+        <%= link_to book.title, book_path(book) %> de <%= book.author %> (<%= status_label(book) %>)
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No tiene publicaciones vigentes.</p>
+<% end %>
