@@ -16,4 +16,12 @@ class Book < ApplicationRecord
   validates :title, :author, presence: true, length: { maximum: 150 }
   validates :published_year,
             numericality: { only_integer: true, less_than_or_equal_to: Date.current.year, allow_nil: true }
+
+  #hola isi, hola vicho
+  #buscar por el titulo o autor, sin distinguir mayusculas
+  #sanitize_sql escapra % y _ para desconfiar del usuario
+  scope :search, lambda { |query|
+    term = "%#{sanitize_sql_like(query)}%"
+    where("books.title ILIKE :term OR books.author ILIKE :term", term: term)
+  }
 end
