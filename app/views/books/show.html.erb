@@ -1,0 +1,41 @@
+<p><%= link_to "← Volver", root_path %></p>
+
+<% if notice %>
+  <p style="color: green;"><%= notice %></p>
+<% end %>
+
+<h1><%= @book.title %></h1>
+<p>de <strong><%= @book.author %></strong></p>
+
+<% if @book.cover_image.attached? %>
+  <%= image_tag @book.cover_image, alt: "Foto de #{@book.title}", style: "max-width: 250px;" %>
+<% end %>
+
+<ul>
+  <li><strong>Categoría:</strong> <%= @book.category.name %></li>
+  <li><strong>Estado:</strong> <%= condition_label(@book) %></li>
+  <li><strong>Modalidad:</strong> <%= modality_label(@book) %></li>
+  <li><strong>Disponibilidad:</strong> <%= status_label(@book) %></li>
+  <% if @book.publisher.present? %>
+    <li><strong>Editorial:</strong> <%= @book.publisher %></li>
+  <% end %>
+  <% if @book.published_year.present? %>
+    <li><strong>Año:</strong> <%= @book.published_year %></li>
+  <% end %>
+  <% if @book.language.present? %>
+    <li><strong>Idioma:</strong> <%= @book.language %></li>
+  <% end %>
+  <li><strong>Publicado por:</strong> <%= @book.user.name %></li>
+</ul>
+
+<% if @book.description.present? %>
+  <h2>Descripción</h2>
+  <%= simple_format @book.description %>
+<% end %>
+
+<% if @book.photos.attached? %>
+  <h2>Más fotos</h2>
+  <% @book.photos.each do |photo| %>
+    <%= image_tag photo, alt: "Foto de #{@book.title}", style: "max-width: 150px;" %>
+  <% end %>
+<% end %>
