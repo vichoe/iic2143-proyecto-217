@@ -2,20 +2,29 @@
   .top-bar {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
     padding: 1rem;
   }
 
   .search {
     display: flex;
     justify-content: center;
-    margin-top: 25vh;
+    margin-top: 10vh;
+  }
+
+  .results {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 0 1rem;
   }
 </style>
 
 <div class="top-bar">
   <% if user_signed_in? %>
-  
-    <%= avatar_for(current_user) %> Hola, <%= current_user.name %>
+    <%= link_to user_path(current_user) do %>
+      <%= avatar_for(current_user) %> Hola, <%= current_user.name %>
+    <% end %>
     <%= link_to "Publicar libro", new_book_path %>
     <%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete %>
   <% else %>
@@ -25,7 +34,47 @@
 
 <div class="search">
   <%= form_with url: root_path, method: :get do |f| %>
-    <%= f.search_field :q, placeholder: "Buscar libros..." %>
+    <%= f.search_field :q, value: @query, placeholder: "Buscar libros o usuarios..." %>
     <%= f.submit "Buscar", name: nil %>
+  <% end %>
+</div>
+
+<div class="results">
+  <% if @query.present? %>
+    <p>
+      Resultados para "<%= @query %>"
+      (<%= link_to "limpiar búsqueda", root_path %>)
+    </p>
+
+    <% if @users.any? %>
+      <h2>Usuarios</h2>
+      <ul>
+        <% @users.each do |user| %>
+          <li><%= link_to user_path(user) do %><%= avatar_for(user, size: 24) %> <%= user.name %><% end %></li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <h2>Libros</h2>
+  <% else %>
+    <h2>Publicaciones recientes</h2>
+  <% end %>
+
+  <% if @books.any? %>
+    <ul>
+      <% @books.each do |book| %>
+        <li>
+          <% if book.cover_image.attached? %>
+            <%= image_tag book.cover_image, alt: book.title, style: "max-width: 50px; vertical-align: middle;" %>
+          <% end %>
+          <%= link_to book.title, book_path(book) %> de <%= book.author %>
+          · publicado por <%= link_to book.user.name, user_path(book.user) %>
+        </li>
+      <% end %>
+    </ul>
+  <% elsif @query.present? %>
+    <p>No encontramos libros que coincidan con tu búsqueda.</p>
+  <% else %>
+    <p>Todavía no hay libros publicados.</p>
   <% end %>
 </div>
