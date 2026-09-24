@@ -13,7 +13,12 @@
 </style>
 
 <div class="top-bar">
-  <%= link_to "Iniciar sesión / Registrarse", new_user_session_path %>
+  <% if user_signed_in? %>
+    Hola, <%= current_user.name %>
+    <%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete %>
+  <% else %>
+    <%= link_to "Iniciar sesión / Registrarse", new_user_session_path %>
+  <% end %>
 </div>
 
 <div class="search">
