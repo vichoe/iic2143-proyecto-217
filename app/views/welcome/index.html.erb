@@ -15,7 +15,7 @@
 <div class="top-bar">
   <% if user_signed_in? %>
   
-    Hola, <%= current_user.name %>
+    <%= avatar_for(current_user) %> Hola, <%= current_user.name %>
     <%= link_to "Publicar libro", new_book_path %>
     <%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete %>
   <% else %>

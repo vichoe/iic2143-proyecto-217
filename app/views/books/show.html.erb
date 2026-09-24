@@ -25,8 +25,8 @@
   <% if @book.language.present? %>
     <li><strong>Idioma:</strong> <%= @book.language %></li>
   <% end %>
-  <li><strong>Publicado por:</strong> <%= @book.user.name %></li>
-</ul>
+  <li><strong>Publicado por:</strong> <%= avatar_for(@book.user, size: 24) %> <%= @book.user.name %></li>
+  </ul>
 
 <% if @book.description.present? %>
   <h2>Descripción</h2>
