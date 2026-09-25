@@ -39,6 +39,25 @@
   <% end %>
 </div>
 
+<div class="filters">
+  <%= form_with url: root_path, method: :get do %>
+    <%= hidden_field_tag :q, @query if @query.present? %>
+
+    <%= select_tag :category_id, options_for_select(Category.order(:name).pluck(:name, :id), @filters[:category_id]), include_blank: "Categoría" %>
+    <%= select_tag :condition, options_for_select(condition_options, @filters[:condition]), include_blank: "Estado" %>
+    <%= select_tag :modality, options_for_select(modality_options, @filters[:modality]), include_blank: "Modalidad" %>
+    <%= select_tag :status, options_for_select(status_filter_options, @filters[:status]), include_blank: "Disponibilidad" %>
+    <%= select_tag :publisher, options_for_select(Book.distinct.where.not(publisher: [nil, ""]).order(:publisher).pluck(:publisher), @filters[:publisher]), include_blank: "Editorial" %>
+    <%= select_tag :published_year, options_for_select(Book.distinct.where.not(published_year: nil).order(published_year: :desc).pluck(:published_year), @filters[:published_year]), include_blank: "Año" %>
+    <%= select_tag :language, options_for_select(Book.distinct.where.not(language: [nil, ""]).order(:language).pluck(:language), @filters[:language]), include_blank: "Idioma" %>
+
+    <%= submit_tag "Filtrar" %>
+    <% if @filters_applied %>
+      <%= link_to "Limpiar filtros", root_path(q: @query.presence) %>
+    <% end %>
+  <% end %>
+</div>
+
 <div class="results">
   <% if @query.present? %>
     <p>
