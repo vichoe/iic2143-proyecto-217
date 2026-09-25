@@ -49,7 +49,8 @@ class WelcomeControllerTest < ActionDispatch::IntegrationTest
     assert_select ".top-bar a[href=?]", user_path(users(:ana))
   end
 
-  #si encuentra filtros
+  # Escenario 1: al combinar varios filtros, el sistema muestra
+  # únicamente los libros que cumplen TODOS los criterios seleccionados.
   test "escenario 1: filtra por categoría y estado combinados" do
     get root_path, params: { category_id: categories(:science_fiction).id, condition: "like_new" }
 
@@ -59,7 +60,8 @@ class WelcomeControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", book_path(books(:hobbit)), count: 0
   end
 
-  #no encuentra filtros
+  # Escenario 2 (HU filtros): si la combinación de filtros no matchea
+  # ningún libro, la lista queda vacía y se muestra el mensaje correspondiente.
   test "escenario 2: combinación de filtros sin coincidencias muestra mensaje" do
     get root_path, params: { category_id: categories(:fantasy).id, condition: "like_new" }
 
@@ -69,4 +71,46 @@ class WelcomeControllerTest < ActionDispatch::IntegrationTest
     assert_match "No hay libros que coincidan con los filtros aplicados.", response.body
   end
 
+  # --- HU "Ordenar resultados de búsqueda" ---
+
+  # Escenario 1: al elegir un criterio de orden, se muestran los libros
+  # ordenados según ese criterio.
+  test "escenario 1: ordena por título de la A a la Z" do
+    get root_path, params: { sort: "title" }
+    assert_response :success
+
+    dune_pos = response.body.index(book_path(books(:dune)))          # "Dune"
+    hobbit_pos = response.body.index(book_path(books(:hobbit)))      # "El Hobbit"
+    foundation_pos = response.body.index(book_path(books(:foundation))) # "Fundación"
+
+    assert dune_pos < hobbit_pos, "Dune debería aparecer antes que El Hobbit"
+    assert hobbit_pos < foundation_pos, "El Hobbit debería aparecer antes que Fundación"
+  end
+
+  test "escenario 1: ordena por mejor calificación del dueño del libro" do
+    get root_path, params: { sort: "rating" }
+    assert_response :success
+
+    # Beto (dune, foundation) tiene una reseña con score 5; Ana (hobbit)
+    # no tiene reseñas recibidas (average_rating nil -> se trata como peor).
+    dune_pos = response.body.index(book_path(books(:dune)))
+    foundation_pos = response.body.index(book_path(books(:foundation)))
+    hobbit_pos = response.body.index(book_path(books(:hobbit)))
+
+    assert dune_pos < hobbit_pos, "El libro del dueño mejor calificado debería ir primero"
+    assert foundation_pos < hobbit_pos, "El libro del dueño mejor calificado debería ir primero"
+  end
+
+  # Escenario 2: sin resultados previos, el selector de orden queda deshabilitado.
+  test "escenario 2: sin resultados el selector de orden queda deshabilitado" do
+    get root_path, params: { q: "xxxxxxxxxx-no-existe" }
+    assert_response :success
+    assert_select "select#sort[disabled]"
+  end
+
+  test "con resultados el selector de orden está habilitado" do
+    get root_path
+    assert_response :success
+    assert_select "select#sort:not([disabled])"
+  end
 end
