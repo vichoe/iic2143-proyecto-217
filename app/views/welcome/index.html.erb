@@ -13,12 +13,22 @@
     margin-top: 10vh;
   }
 
+ .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+
   .results {
     max-width: 700px;
     margin: 2rem auto;
     padding: 0 1rem;
   }
 </style>
+
+<% filters_applied = @filters.values.any?(&:present?) %>
 
 <div class="top-bar">
   <% if user_signed_in? %>
@@ -36,6 +46,25 @@
   <%= form_with url: root_path, method: :get do |f| %>
     <%= f.search_field :q, value: @query, placeholder: "Buscar libros o usuarios..." %>
     <%= f.submit "Buscar", name: nil %>
+  <% end %>
+</div>
+
+<div class="filters">
+  <%= form_with url: root_path, method: :get do %>
+    <%= hidden_field_tag :q, @query if @query.present? %>
+
+    <%= select_tag :category_id, options_for_select(Category.order(:name).pluck(:name, :id), @filters[:category_id]), include_blank: "Categoría" %>
+    <%= select_tag :condition, options_for_select(condition_options, @filters[:condition]), include_blank: "Estado" %>
+    <%= select_tag :modality, options_for_select(modality_options, @filters[:modality]), include_blank: "Modalidad" %>
+    <%= select_tag :status, options_for_select(status_filter_options, @filters[:status]), include_blank: "Disponibilidad" %>
+    <%= select_tag :publisher, options_for_select(Book.distinct.where.not(publisher: [nil, ""]).order(:publisher).pluck(:publisher), @filters[:publisher]), include_blank: "Editorial" %>
+    <%= select_tag :published_year, options_for_select(Book.distinct.where.not(published_year: nil).order(published_year: :desc).pluck(:published_year), @filters[:published_year]), include_blank: "Año" %>
+    <%= select_tag :language, options_for_select(Book.distinct.where.not(language: [nil, ""]).order(:language).pluck(:language), @filters[:language]), include_blank: "Idioma" %>
+
+    <%= submit_tag "Filtrar" %>
+    <% if filters_applied %>
+      <%= link_to "Limpiar filtros", root_path(q: @query.presence) %>
+    <% end %>
   <% end %>
 </div>
 
@@ -74,6 +103,8 @@
     </ul>
   <% elsif @query.present? %>
     <p>No encontramos libros que coincidan con tu búsqueda.</p>
+  <% elsif filters_applied %>
+    <p>No hay libros que coincidan con los filtros aplicados.</p>
   <% else %>
     <p>Todavía no hay libros publicados.</p>
   <% end %>
