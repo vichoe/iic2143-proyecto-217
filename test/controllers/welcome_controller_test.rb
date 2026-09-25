@@ -48,4 +48,25 @@ class WelcomeControllerTest < ActionDispatch::IntegrationTest
     get root_path
     assert_select ".top-bar a[href=?]", user_path(users(:ana))
   end
+
+  #si encuentra filtros
+  test "escenario 1: filtra por categoría y estado combinados" do
+    get root_path, params: { category_id: categories(:science_fiction).id, condition: "like_new" }
+
+    assert_response :success
+    assert_select "a[href=?]", book_path(books(:dune))
+    assert_select "a[href=?]", book_path(books(:foundation)), count: 0
+    assert_select "a[href=?]", book_path(books(:hobbit)), count: 0
+  end
+
+  #no encuentra filtros
+  test "escenario 2: combinación de filtros sin coincidencias muestra mensaje" do
+    get root_path, params: { category_id: categories(:fantasy).id, condition: "like_new" }
+
+    assert_response :success
+    assert_select "a[href=?]", book_path(books(:hobbit)), count: 0
+    assert_select "a[href=?]", book_path(books(:dune)), count: 0
+    assert_match "No hay libros que coincidan con los filtros aplicados.", response.body
+  end
+
 end

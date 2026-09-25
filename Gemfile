@@ -67,3 +67,5 @@ end
 
 gem 'rubocop', require: false
 gem "devise", "~> 5.0"
+
+gem "cloudinary", "~> 2.4"

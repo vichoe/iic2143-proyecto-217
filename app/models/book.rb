@@ -24,4 +24,23 @@ class Book < ApplicationRecord
     term = "%#{sanitize_sql_like(query)}%"
     where("books.title ILIKE :term OR books.author ILIKE :term", term: term)
   }
+  #filtrar busqueda por opciones de libro
+  scope :by_category,   ->(category_id)   { where(category_id: category_id) if category_id.present? }
+  scope :by_condition,  ->(condition)     { where(condition: condition) if condition.present? }
+  scope :by_modality,   ->(modality)      { where(modality: modality) if modality.present? }
+  scope :by_status,     ->(status)        { where(status: status) if status.present? }
+  scope :by_publisher,  ->(publisher)     { where(publisher: publisher) if publisher.present? }
+  scope :by_year,       ->(published_year) { where(published_year: published_year) if published_year.present? }
+  scope :by_language,   ->(language)      { where(language: language) if language.present? }
+ 
+  #aqui hace la relacion que no hay nada segun el filtro
+  def self.filter_by(filters = {})
+    by_category(filters[:category_id])
+      .by_condition(filters[:condition])
+      .by_modality(filters[:modality])
+      .by_status(filters[:status])
+      .by_publisher(filters[:publisher])
+      .by_year(filters[:published_year])
+      .by_language(filters[:language])
+  end
 end
