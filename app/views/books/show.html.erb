@@ -3,6 +3,16 @@
 <h1><%= @book.title %></h1>
 <p>de <strong><%= @book.author %></strong></p>
 
+<% if @book.withdrawn? %>
+  <p><em>Esta publicación fue eliminada y ya no aparece en las búsquedas.</em></p>
+<% elsif current_user == @book.user %>
+  <p>
+    <%= link_to "Editar publicación", edit_book_path(@book) %>
+    <%= button_to "Eliminar publicación", book_path(@book), method: :delete,
+                  form: { data: { turbo_confirm: "¿Seguro que quieres eliminar esta publicación?" } } %>
+  </p>
+<% end %>
+
 <% if @book.cover_image.attached? %>
   <%= image_tag @book.cover_image, alt: "Foto de #{@book.title}", style: "max-width: 250px;" %>
 <% end %>
