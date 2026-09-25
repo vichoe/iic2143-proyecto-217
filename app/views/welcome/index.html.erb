@@ -13,7 +13,7 @@
     margin-top: 10vh;
   }
 
- .filters {
+  .filters {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
@@ -61,6 +61,8 @@
     <%= select_tag :published_year, options_for_select(Book.distinct.where.not(published_year: nil).order(published_year: :desc).pluck(:published_year), @filters[:published_year]), include_blank: "Año" %>
     <%= select_tag :language, options_for_select(Book.distinct.where.not(language: [nil, ""]).order(:language).pluck(:language), @filters[:language]), include_blank: "Idioma" %>
 
+    <%= select_tag :sort, options_for_select(sort_options, @sort), include_blank: "Ordenar por", disabled: @books.empty?, onchange: "this.form.requestSubmit()" %>
+
     <%= submit_tag "Filtrar" %>
     <% if filters_applied %>
       <%= link_to "Limpiar filtros", root_path(q: @query.presence) %>
@@ -85,6 +87,8 @@
     <% end %>
 
     <h2>Libros</h2>
+  <% elsif filters_applied %>
+    <h2>Resultados filtrados</h2>
   <% else %>
     <h2>Publicaciones recientes</h2>
   <% end %>
