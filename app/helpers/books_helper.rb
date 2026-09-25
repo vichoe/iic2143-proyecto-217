@@ -26,6 +26,10 @@ module BooksHelper
     MODALITY_LABELS.map { |value, label| [label, value] }
   end
 
+  def status_filter_options
+    STATUS_LABELS.slice("available", "reserved").map { |value, label| [label, value] }
+  end
+
   def condition_label(book)
     CONDITION_LABELS[book.condition]
   end
