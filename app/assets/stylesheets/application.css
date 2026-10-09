@@ -8,3 +8,126 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+}
+
+.page-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 20px 0;
+}
+
+.search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 40px auto 24px;
+}
+
+.search form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search input[type="search"] {
+  width: 360px;
+  min-height: 38px;
+  padding: 8px 12px;
+}
+
+.search input[type="submit"] {
+  min-height: 38px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.filters {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  margin: 20px auto;
+}
+
+.filters form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filters select,
+.filters input[type="submit"] {
+  min-height: 36px;
+  padding: 6px 10px;
+}
+
+.filters a {
+  padding: 8px 10px;
+}
+
+.results {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.results h2 {
+  margin-top: 24px;
+}
+
+.results ul {
+  padding-left: 20px;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 450px;
+  margin: 60px auto;
+  padding: 24px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+}
+
+.auth-container h2 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.auth-container input,
+.auth-container select,
+.auth-container textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.auth-container input[type="submit"],
+.auth-container button {
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+}
