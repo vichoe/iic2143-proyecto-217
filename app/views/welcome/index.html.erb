@@ -3,45 +3,112 @@
   <div class="top-bar">
     <% if user_signed_in? %>
       <%= link_to user_path(current_user) do %>
-        <%= avatar_for(current_user) %> Hola, <%= current_user.name %>
+        <%= avatar_for(current_user) %>
+        Hola, <%= current_user.name %>
       <% end %>
+
       <%= link_to "Publicar libro", new_book_path %>
-      <%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete %>
+
+      <%= button_to "Cerrar sesión",
+                    destroy_user_session_path,
+                    method: :delete %>
     <% else %>
-      <%= link_to "Iniciar sesión / Registrarse", new_user_session_path %>
+      <%= link_to "Iniciar sesión / Registrarse",
+                  new_user_session_path %>
     <% end %>
   </div>
+
 
   <div class="search">
     <%= form_with url: root_path, method: :get do |f| %>
       <%= f.search_field :q,
-                        value: @query,
-                        placeholder: "Buscar libros o usuarios..." %>
+                         value: @query,
+                         placeholder: "Buscar libros o usuarios..." %>
 
       <%= f.submit "Buscar", name: nil %>
     <% end %>
   </div>
 
-    <% filters_applied = @filters.values.any?(&:present?) %>
+
+  <% filters_applied = @filters.values.any?(&:present?) %>
 
   <div class="filters">
     <%= form_with url: root_path, method: :get do %>
       <%= hidden_field_tag :q, @query if @query.present? %>
 
-      <%= select_tag :category_id, options_for_select(Category.order(:name).pluck(:name, :id), @filters[:category_id]), include_blank: "Categoría" %>
-      <%= select_tag :condition, options_for_select(condition_options, @filters[:condition]), include_blank: "Estado" %>
-      <%= select_tag :modality, options_for_select(modality_options, @filters[:modality]), include_blank: "Modalidad" %>
-      <%= select_tag :status, options_for_select(status_filter_options, @filters[:status]), include_blank: "Disponibilidad" %>
-      <%= select_tag :publisher, options_for_select(Book.distinct.where.not(publisher: [nil, ""]).order(:publisher).pluck(:publisher), @filters[:publisher]), include_blank: "Editorial" %>
-      <%= select_tag :published_year, options_for_select(Book.distinct.where.not(published_year: nil).order(published_year: :desc).pluck(:published_year), @filters[:published_year]), include_blank: "Año" %>
-      <%= select_tag :language, options_for_select(Book.distinct.where.not(language: [nil, ""]).order(:language).pluck(:language), @filters[:language]), include_blank: "Idioma" %>
+      <%= select_tag :category_id,
+                     options_for_select(
+                       Category.order(:name).pluck(:name, :id),
+                       @filters[:category_id]
+                     ),
+                     include_blank: "Categoría" %>
+
+      <%= select_tag :condition,
+                     options_for_select(
+                       condition_options,
+                       @filters[:condition]
+                     ),
+                     include_blank: "Estado" %>
+
+      <%= select_tag :modality,
+                     options_for_select(
+                       modality_options,
+                       @filters[:modality]
+                     ),
+                     include_blank: "Modalidad" %>
+
+      <%= select_tag :status,
+                     options_for_select(
+                       status_filter_options,
+                       @filters[:status]
+                     ),
+                     include_blank: "Disponibilidad" %>
+
+      <%= select_tag :publisher,
+                     options_for_select(
+                       Book.distinct
+                           .where.not(publisher: [nil, ""])
+                           .order(:publisher)
+                           .pluck(:publisher),
+                       @filters[:publisher]
+                     ),
+                     include_blank: "Editorial" %>
+
+      <%= select_tag :published_year,
+                     options_for_select(
+                       Book.distinct
+                           .where.not(published_year: nil)
+                           .order(published_year: :desc)
+                           .pluck(:published_year),
+                       @filters[:published_year]
+                     ),
+                     include_blank: "Año" %>
+
+      <%= select_tag :language,
+                     options_for_select(
+                       Book.distinct
+                           .where.not(language: [nil, ""])
+                           .order(:language)
+                           .pluck(:language),
+                       @filters[:language]
+                     ),
+                     include_blank: "Idioma" %>
+
+      <%= select_tag :sort,
+                     options_for_select(sort_options, @sort),
+                     include_blank: "Ordenar por",
+                     disabled: @books.empty?,
+                     onchange: "this.form.requestSubmit()" %>
 
       <%= submit_tag "Filtrar" %>
+
       <% if filters_applied %>
-        <%= link_to "Limpiar filtros", root_path(q: @query.presence) %>
+        <%= link_to "Limpiar filtros",
+                    root_path(q: @query.presence) %>
       <% end %>
     <% end %>
   </div>
+
 
   <div class="results">
     <% if @query.present? %>
@@ -52,38 +119,62 @@
 
       <% if @users.any? %>
         <h2>Usuarios</h2>
+
         <ul>
           <% @users.each do |user| %>
-            <li><%= link_to user_path(user) do %><%= avatar_for(user, size: 24) %> <%= user.name %><% end %></li>
+            <li>
+              <%= link_to user_path(user) do %>
+                <%= avatar_for(user, size: 24) %>
+                <%= user.name %>
+              <% end %>
+            </li>
           <% end %>
         </ul>
       <% end %>
 
       <h2>Libros</h2>
+
+    <% elsif filters_applied %>
+      <h2>Resultados filtrados</h2>
+
     <% else %>
       <h2>Publicaciones recientes</h2>
     <% end %>
+
 
     <% if @books.any? %>
       <ul>
         <% @books.each do |book| %>
           <li>
             <% if book.cover_image.attached? %>
-              <%= image_tag book.cover_image, alt: book.title, style: "max-width: 50px; vertical-align: middle;" %>
+              <%= image_tag book.cover_image,
+                            alt: book.title,
+                            style: "max-width: 50px; vertical-align: middle;" %>
             <% end %>
-            <%= link_to book.title, book_path(book) %> de <%= book.author %>
-            · publicado por <%= link_to book.user.name, user_path(book.user) %>
+
+            <%= link_to book.title, book_path(book) %>
+            de <%= book.author %>
+            · publicado por
+            <%= link_to book.user.name, user_path(book.user) %>
           </li>
         <% end %>
       </ul>
+
     <% elsif @query.present? %>
-      <p>No encontramos libros que coincidan con tu búsqueda.</p>
+      <p>
+        No encontramos libros que coincidan con tu búsqueda.
+      </p>
+
     <% elsif filters_applied %>
-      <p>No hay libros que coincidan con los filtros aplicados.</p>
+      <p>
+        No hay libros que coincidan con los filtros aplicados.
+      </p>
+
     <% else %>
-      <p>Todavía no hay libros publicados.</p>
+      <p>
+        Todavía no hay libros publicados.
+      </p>
     <% end %>
   </div>
 
-  </div>
-
+</div>
