@@ -8,6 +8,9 @@
       <% end %>
 
       <%= link_to "Publicar libro", new_book_path %>
+      <% if current_user.admin? %>
+        <%= link_to "Administrar usuarios", users_path %>
+      <% end %>
 
       <%= button_to "Cerrar sesión",
                     destroy_user_session_path,
@@ -21,9 +24,11 @@
 
   <div class="search">
     <%= form_with url: root_path, method: :get do |f| %>
-      <%= f.search_field :q,
-                         value: @query,
-                         placeholder: "Buscar libros o usuarios..." %>
+      <% if user_signed_in? && current_user.admin? %>
+        <%= f.search_field :q, value: @query, placeholder: "Buscar libros o usuarios..." %>
+      <% else %>
+        <%= f.search_field :q, value: @query, placeholder: "Buscar libros..." %>
+      <% end %>
 
       <%= f.submit "Buscar", name: nil %>
     <% end %>
@@ -117,9 +122,8 @@
         (<%= link_to "limpiar búsqueda", root_path %>)
       </p>
 
-      <% if @users.any? %>
+      <% if user_signed_in? && current_user.admin? && @users.any? %>
         <h2>Usuarios</h2>
-
         <ul>
           <% @users.each do |user| %>
             <li>

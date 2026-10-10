@@ -15,14 +15,16 @@ class WelcomeController < ApplicationController
  
     if @query.present?
       @books = @books.search(@query)
-      @users = User.search(@query).order(:name)
+
+      if user_signed_in? && current_user.admin?
+        @users = User.search(@query).order(:name)
+      else
+        @users = User.none
+      end
     else
-      @books = @books.limit(20) unless @filters.values.any?(&:present?)
+      @books = @books.limit(20)
       @users = User.none
     end
- 
-    @books = Book.sort_by_criterion(@books, @sort) if @sort.present?
-  end
  
   private
  
