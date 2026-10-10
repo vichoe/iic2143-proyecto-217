@@ -24,11 +24,35 @@ class WelcomeControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", book_path(books(:hobbit)), count: 0
   end
 
-  test "busca usuarios por nombre y enlaza a su perfil" do
+  
+  test "administrador busca usuarios por nombre y enlaza a su perfil" do
+    admin = users(:carla)
+    admin.update!(admin: true)
+
+    sign_in admin
+
     get root_path, params: { q: "carla" }
+
+    assert_response :success
     assert_select "h2", "Usuarios"
     assert_select "a[href=?]", user_path(users(:carla))
   end
+
+  
+  test "usuario comun no puede buscar otros usuarios" do
+    usuario = users(:carla)
+    usuario.update!(admin: false)
+
+    sign_in usuario
+
+    get root_path, params: { q: "carla" }
+
+    assert_response :success
+    assert_select "h2", text: "Usuarios", count: 0
+    assert_select "a[href=?]", user_path(usuario), count: 1
+  end
+
+
 
   test "no muestra libros retirados" do
     books(:dune).update!(status: :withdrawn)

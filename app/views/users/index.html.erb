@@ -1,0 +1,52 @@
+
+<h1>Administración de Usuarios</h1>
+
+<p>
+  <%= link_to "← Volver al inicio", root_path %>
+</p>
+<h2>Buscar usuarios</h2>
+<%= form_with url: users_path, method: :get do |f| %>
+  <%= f.search_field :q,
+      value: @query,
+      placeholder: "Buscar usuario por nombre..." %>
+
+  <%= f.submit "Buscar" %>
+<% end %>
+<hr>
+
+<h2>Usuarios registrados</h2>
+<p>Total encontrados: <%= @users.count %></p>
+
+<% if @users.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Rol</th>
+        <th>Calificación</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @users.each do |user| %>
+        <tr>
+          <td><%= user.name %></td>
+          <td><%= user.email %></td>
+          <td>
+            <%= user.admin? ? "Administrador" : "Usuario" %>
+          </td>
+          <td>
+            <%= user.average_rating || "Sin calificación" %>
+          </td>
+          <td>
+            <%= link_to "Ver perfil", user_path(user) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No se encontraron usuarios.</p>
+<% end %>
