@@ -21,9 +21,8 @@ class UsersController < ApplicationController
       return
     end
 
-    @books= @user.books
-                  .where(status: [:available, :reserved])
-                  .order(created_at: :desc)
+    @books= @user.books.where(status: [:available, :reserved]).order(created_at: :desc)
+  
   end
 
   private
