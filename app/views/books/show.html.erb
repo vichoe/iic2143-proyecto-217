@@ -31,7 +31,7 @@
   <% if @book.language.present? %>
     <li><strong>Idioma:</strong> <%= @book.language %></li>
   <% end %>
-  <li><strong>Publicado por:</strong> <%= avatar_for(@book.user, size: 24) %> <%= link_to @book.user.name, user_path(@book.user) %></li>
+  <li><strong>Publicado por:</strong> <%= avatar_for(@book.user, size: 24) %> <%= can_view_profile?(@book.user) ? link_to(@book.user.name, user_path(@book.user)) : @book.user.name %></li>
   </ul>
 
 <% if @book.description.present? %>
