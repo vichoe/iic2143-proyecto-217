@@ -8,6 +8,7 @@
       <% end %>
 
       <%= link_to "Publicar libro", new_book_path %>
+      <%= link_to "Mis solicitudes", exchange_requests_path %>
       <% if current_user.admin? %>
         <%= link_to "Administrar usuarios", users_path %>
       <% end %>

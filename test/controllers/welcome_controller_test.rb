@@ -3,12 +3,23 @@ require "test_helper"
 class WelcomeControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
-  test "sin búsqueda muestra publicaciones recientes con link al perfil del dueño" do
-    get root_path
-    assert_response :success
-    assert_select "a[href=?]", book_path(books(:hobbit)), text: "El Hobbit"
-    assert_select "a[href=?]", user_path(users(:ana)), text: "Ana Lectora"
-    assert_select "a[href=?]", user_path(users(:beto)), text: "Beto Librero"
+  test "con perfiles públicos, la portada enlaza al perfil del dueño" do
+    with_public_profiles(true) do
+      get root_path
+      assert_response :success
+      assert_select "a[href=?]", book_path(books(:hobbit)), text: "El Hobbit"
+      assert_select "a[href=?]", user_path(users(:ana)), text: "Ana Lectora"
+      assert_select "a[href=?]", user_path(users(:beto)), text: "Beto Librero"
+    end
+  end
+
+  test "con perfiles privados, la portada muestra el nombre del dueño sin link" do
+    with_public_profiles(false) do
+      get root_path
+      assert_response :success
+      assert_match "Ana Lectora", response.body
+      assert_select "a[href=?]", user_path(users(:ana)), count: 0
+    end
   end
 
   test "busca libros por título sin distinguir mayúsculas" do

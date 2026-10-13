@@ -40,4 +40,16 @@ class ExchangeRequestTest < ActiveSupport::TestCase
     assert request.participant?(users(:ana))
     assert_not request.participant?(users(:carla))
   end
+
+  test "no se puede solicitar un libro que no está disponible" do
+    books(:foundation).reserved!
+    request = ExchangeRequest.new(requester: users(:carla), book: books(:foundation))
+    assert_not request.valid?
+    assert request.errors.key?(:book)
+  end
+
+  test "no se permiten dos solicitudes pendientes del mismo usuario por el mismo libro" do
+    duplicate = ExchangeRequest.new(requester: users(:beto), book: books(:hobbit), offered_book: books(:dune))
+    assert_not duplicate.valid?
+  end
 end

@@ -1,0 +1,24 @@
+<p><%= link_to "← Volver al inicio", root_path %></p>
+
+<h1>Mis solicitudes</h1>
+
+<h2>Enviadas</h2>
+<% if @sent_requests.any? %>
+  <ul>
+    <% @sent_requests.each do |request| %>
+      <li>
+        <%= link_to request.book.title, book_path(request.book) %>
+        (de <%= request.book.user.name %>)
+        <% if request.offered_book %>
+          · ofreciste: <%= link_to request.offered_book.title, book_path(request.offered_book) %>
+        <% else %>
+          · préstamo
+        <% end %>
+        · <strong><%= request_status_label(request) %></strong>
+        · <%= l(request.created_at.to_date) %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>Todavía no has enviado solicitudes.</p>
+<% end %>
