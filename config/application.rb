@@ -14,7 +14,7 @@ module Iic2143Proyecto217
     # Perfiles de usuario públicos (true) o privados (false).
     # Con false: solo el dueño y los administradores ven un perfil, y solo los admins pueden buscar usuarios.
     # Se puede cambiar sin tocar el código con la variable de entorno PUBLIC_PROFILES=false (por ejemplo, en Render).
-    config.x.public_profiles = ENV.fetch("PUBLIC_PROFILES", "true") == "true"
+    config.x.public_profiles = ENV.fetch("PUBLIC_PROFILES", "false") == "true"
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.

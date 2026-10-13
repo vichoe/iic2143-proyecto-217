@@ -9,7 +9,14 @@ module ActiveSupport
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
-
+    
+    def with_public_profiles(value)
+      original = Rails.configuration.x.public_profiles
+      Rails.configuration.x.public_profiles = value
+      yield
+    ensure
+      Rails.configuration.x.public_profiles = original
+    end
     # Add more helper methods to be used by all tests here...
   end
 end
