@@ -53,8 +53,7 @@
 
   <p>
     <%= f.label :language, "Idioma (opcional)" %><br>
-    <%= f.text_field :language %>
-  </p>
+    <%= f.select :language, language_options, include_blank: "Sin especificar" %>  </p>
 
   <p>
     <%= f.label :cover_image, book.new_record? ? "Foto del libro" : "Cambiar foto del libro (opcional)" %><br>

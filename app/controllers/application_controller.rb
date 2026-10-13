@@ -6,11 +6,24 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   before_action :configure_permitted_parameters, if: :devise_controller?
-
+  helper_method :public_profiles?, :can_view_profile?, :can_search_users?
   protected
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :city, :bio, :avatar])
     devise_parameter_sanitizer.permit(:account_update, keys: [:name, :city, :bio, :avatar])
+  end
+
+  # config/application.rb para hacer perfiles publicos o privados
+  def public_profiles?
+    Rails.configuration.x.public_profiles
+  end
+
+  def can_view_profile?(user)
+    public_profiles? || (user_signed_in? && (current_user.admin? || current_user == user))
+  end
+
+  def can_search_users?
+    user_signed_in? && current_user.admin?
   end
 end

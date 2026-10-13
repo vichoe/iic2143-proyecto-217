@@ -26,30 +26,31 @@ class WelcomeControllerTest < ActionDispatch::IntegrationTest
 
   
   test "administrador busca usuarios por nombre y enlaza a su perfil" do
-    admin = users(:carla)
-    admin.update!(admin: true)
+    users(:carla).update!(admin: true)
+    sign_in users(:carla)
 
-    sign_in admin
-
-    get root_path, params: { q: "carla" }
+    get root_path, params: { user_q: "beto" }
 
     assert_response :success
-    assert_select "h2", "Usuarios"
-    assert_select "a[href=?]", user_path(users(:carla))
+    assert_select "h2", text: /Usuarios que coinciden/
+    assert_select "a[href=?]", user_path(users(:beto))
   end
 
-  
-  test "usuario comun no puede buscar otros usuarios" do
-    usuario = users(:carla)
-    usuario.update!(admin: false)
+  test "un usuario común no ve la búsqueda de usuarios" do
+    sign_in users(:ana)
 
-    sign_in usuario
-
-    get root_path, params: { q: "carla" }
+    get root_path, params: { user_q: "beto" }
 
     assert_response :success
-    assert_select "h2", text: "Usuarios", count: 0
-    assert_select "a[href=?]", user_path(usuario), count: 1
+    assert_select "input[name=user_q]", count: 0
+    assert_select "h2", text: /Usuarios que coinciden/, count: 0
+  end
+
+  test "un visitante solo ve la barra de búsqueda de libros" do
+    get root_path
+
+    assert_select "input[name=q]"
+    assert_select "input[name=user_q]", count: 0
   end
 
 
@@ -136,5 +137,38 @@ class WelcomeControllerTest < ActionDispatch::IntegrationTest
     get root_path
     assert_response :success
     assert_select "select#sort:not([disabled])"
+  end
+
+  # --- Filtros de editorial, rango de años e idioma ---
+
+  test "filtra por editorial con búsqueda parcial y sin distinguir mayúsculas" do
+    books(:dune).update!(publisher: "Ediciones Minotauro")
+
+    get root_path, params: { publisher: "minotauro" }
+
+    assert_select "a[href=?]", book_path(books(:dune))
+    assert_select "a[href=?]", book_path(books(:hobbit)), count: 0
+  end
+
+  test "filtra por rango de años de publicación" do
+    books(:hobbit).update!(published_year: 1937)
+    books(:foundation).update!(published_year: 1951)
+    books(:dune).update!(published_year: 1965)
+
+    get root_path, params: { year_from: 1950, year_to: 1960 }
+
+    assert_select "a[href=?]", book_path(books(:foundation))
+    assert_select "a[href=?]", book_path(books(:hobbit)), count: 0
+    assert_select "a[href=?]", book_path(books(:dune)), count: 0
+  end
+
+  test "filtra por idioma" do
+    books(:hobbit).update!(language: :spanish)
+    books(:dune).update!(language: :english)
+
+    get root_path, params: { language: "spanish" }
+
+    assert_select "a[href=?]", book_path(books(:hobbit))
+    assert_select "a[href=?]", book_path(books(:dune)), count: 0
   end
 end
