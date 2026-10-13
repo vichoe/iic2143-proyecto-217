@@ -59,4 +59,16 @@ class BooksControllerTest < ActionDispatch::IntegrationTest
     get root_path
     assert_select "a[href=?]", book_path(books(:hobbit)), count: 0
   end
+
+  test "no se puede editar una publicación eliminada" do
+    books(:hobbit).withdrawn!
+    sign_in users(:ana)
+
+    get edit_book_path(books(:hobbit))
+    assert_redirected_to book_path(books(:hobbit))
+
+    patch book_path(books(:hobbit)), params: { book: { title: "Revivido" } }
+    assert_equal "El Hobbit", books(:hobbit).reload.title
+  end
+
 end
