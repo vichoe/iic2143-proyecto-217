@@ -12,7 +12,9 @@ class ExchangeRequest < ApplicationRecord
   validate :requester_is_not_owner
   validate :offered_book_belongs_to_requester
   validate :offered_book_required_for_exchange
-
+  validate :book_is_available, on: :create
+  validate :offered_book_is_available, on: :create
+  validate :no_duplicate_pending_request, on: :create
   # El dueño del libro solicitado.
   def owner
     book.user
@@ -41,5 +43,24 @@ class ExchangeRequest < ApplicationRecord
     return if book.nil? || !book.exchange?
 
     errors.add(:offered_book, "es obligatorio en un intercambio") if offered_book.nil?
+  end
+
+  def book_is_available
+    return if book.nil? || book.available?
+
+    errors.add(:book, "no está disponible")
+  end
+
+  def offered_book_is_available
+    return if offered_book.nil? || offered_book.available?
+
+    errors.add(:offered_book, "no está disponible")
+  end
+
+  def no_duplicate_pending_request
+    return if book.nil? || requester.nil?
+    return unless ExchangeRequest.pending.exists?(book: book, requester: requester)
+
+    errors.add(:base, "Ya tienes una solicitud pendiente por este libro")
   end
 end

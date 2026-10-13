@@ -13,6 +13,16 @@
   </p>
 <% end %>
 
+<% if @book.available? && current_user != @book.user %>
+  <% if !user_signed_in? %>
+    <p><%= link_to "Inicia sesión para solicitar este libro", new_user_session_path %></p>
+  <% elsif @book.exchange_requests.pending.exists?(requester: current_user) %>
+    <p><em>Ya enviaste una solicitud por este libro. Puedes verla en <%= link_to "Mis solicitudes", exchange_requests_path %>.</em></p>
+  <% else %>
+    <p><%= link_to "Solicitar este libro", new_book_exchange_request_path(@book) %></p>
+  <% end %>
+<% end %>
+
 <% if @book.cover_image.attached? %>
   <%= image_tag @book.cover_image, alt: "Foto de #{@book.title}", style: "max-width: 250px;" %>
 <% end %>

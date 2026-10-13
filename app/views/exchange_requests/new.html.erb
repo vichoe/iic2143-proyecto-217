@@ -1,0 +1,41 @@
+<p><%= link_to "← Volver al libro", book_path(@book) %></p>
+
+<h1>Solicitar "<%= @book.title %>"</h1>
+<p>
+  Dueño: <%= @book.user.name %> ·
+  Modalidad: <strong><%= modality_label(@book) %></strong>
+</p>
+
+<%= form_with model: @exchange_request, url: book_exchange_requests_path(@book) do |f| %>
+  <% if @exchange_request.errors.any? %>
+    <div style="color: red;">
+      <p>No se pudo enviar la solicitud:</p>
+      <ul>
+        <% @exchange_request.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if @book.exchange? %>
+    <p>
+      <%= f.label :offered_book_id, "¿Qué libro tuyo ofreces a cambio?" %><br>
+      <% if @offerable_books.any? %>
+        <%= f.collection_select :offered_book_id, @offerable_books, :id, :title,
+                                { prompt: "Elige uno de tus libros" }, required: true %>
+      <% else %>
+        <em>No tienes libros disponibles para ofrecer. <%= link_to "Publica uno", new_book_path %> primero.</em>
+      <% end %>
+    </p>
+  <% else %>
+    <p>Es un <strong>préstamo</strong>: no necesitas ofrecer un libro a cambio.</p>
+  <% end %>
+
+  <p>
+    <%= f.label :message, "Mensaje para el dueño (opcional)" %><br>
+    <%= f.text_area :message, rows: 3, placeholder: "Ej: ¡Hola! Me interesa mucho este libro..." %>
+  </p>
+
+  <%= f.submit "Enviar solicitud", disabled: @book.exchange? && @offerable_books.empty? %>
+<% end %>
