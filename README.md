@@ -2,6 +2,10 @@ Se utilizo la configuracion de Rubocop del siguiente link: https://iic2143.githu
 
 LINK DE RENDER: https://two026-2-grupo-217.onrender.com/ 
 
+### Uso de IA 
+
+Principalmente se uso Claude para depuración y creacion de testcases
+
 ### Notas
 Nos daba error al hacer Pull Request en `System Test` y es porque no existía `test/system`.
 Cuando Rails genera un proyecto nuevo con soporte de tests de sistema, siempre crea esa carpeta con un archivo base. Puede ser que se te borrara Vicho o se ignorara en el `.gitignore`

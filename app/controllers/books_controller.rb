@@ -35,8 +35,7 @@ class BooksController < ApplicationController
   # Así no se pierden los intercambios ni las reseñas asociadas a él.
   def destroy
     @book.withdrawn!
-    redirect_to user_path(current_user), notice: "Publicación eliminada."
-  end
+    redirect_to user_path(current_user), notice: "Publicación eliminada.", status: :see_other  end
 
   private
 
@@ -45,9 +44,11 @@ class BooksController < ApplicationController
   end
 
   def require_owner
-    return if @book.user == current_user
-
-    redirect_to @book, alert: "Solo el dueño puede modificar esta publicación."
+    if @book.user != current_user
+      redirect_to @book, alert: "Solo el dueño puede modificar esta publicación."
+    elsif @book.withdrawn?
+      redirect_to @book, alert: "Esta publicación fue eliminada y ya no se puede modificar."
+    end
   end
 
   def book_params

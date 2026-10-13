@@ -39,4 +39,18 @@ class BookTest < ActiveSupport::TestCase
     assert_equal users(:ana), books(:hobbit).user
     assert_equal categories(:fantasy), books(:hobbit).category
   end
+
+
+  test "el idioma solo acepta Español, Inglés u Otro" do
+    book = books(:hobbit)
+    book.language = "klingon"
+    assert_not book.valid?
+
+    book.language = :spanish
+    assert book.valid?
+
+    book.language = nil
+    assert book.valid?
+  end
+  
 end
