@@ -138,4 +138,37 @@ class WelcomeControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "select#sort:not([disabled])"
   end
+
+  # --- Filtros de editorial, rango de años e idioma ---
+
+  test "filtra por editorial con búsqueda parcial y sin distinguir mayúsculas" do
+    books(:dune).update!(publisher: "Ediciones Minotauro")
+
+    get root_path, params: { publisher: "minotauro" }
+
+    assert_select "a[href=?]", book_path(books(:dune))
+    assert_select "a[href=?]", book_path(books(:hobbit)), count: 0
+  end
+
+  test "filtra por rango de años de publicación" do
+    books(:hobbit).update!(published_year: 1937)
+    books(:foundation).update!(published_year: 1951)
+    books(:dune).update!(published_year: 1965)
+
+    get root_path, params: { year_from: 1950, year_to: 1960 }
+
+    assert_select "a[href=?]", book_path(books(:foundation))
+    assert_select "a[href=?]", book_path(books(:hobbit)), count: 0
+    assert_select "a[href=?]", book_path(books(:dune)), count: 0
+  end
+
+  test "filtra por idioma" do
+    books(:hobbit).update!(language: :spanish)
+    books(:dune).update!(language: :english)
+
+    get root_path, params: { language: "spanish" }
+
+    assert_select "a[href=?]", book_path(books(:hobbit))
+    assert_select "a[href=?]", book_path(books(:dune)), count: 0
+  end
 end

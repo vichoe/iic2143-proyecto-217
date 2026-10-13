@@ -71,36 +71,17 @@
                      ),
                      include_blank: "Disponibilidad" %>
 
-      <%= select_tag :publisher,
-                     options_for_select(
-                       Book.distinct
-                           .where.not(publisher: [nil, ""])
-                           .order(:publisher)
-                           .pluck(:publisher),
-                       @filters[:publisher]
-                     ),
-                     include_blank: "Editorial" %>
+      <%= text_field_tag :publisher, @filters[:publisher], placeholder: "Editorial" %>
 
-      <%= select_tag :published_year,
-                     options_for_select(
-                       Book.distinct
-                           .where.not(published_year: nil)
-                           .order(published_year: :desc)
-                           .pluck(:published_year),
-                       @filters[:published_year]
-                     ),
-                     include_blank: "Año" %>
+      <%= number_field_tag :year_from, @filters[:year_from],
+                           placeholder: "Año desde", min: 0, max: Date.current.year %>
+      <%= number_field_tag :year_to, @filters[:year_to],
+                           placeholder: "Año hasta", min: 0, max: Date.current.year %>
 
       <%= select_tag :language,
-                     options_for_select(
-                       Book.distinct
-                           .where.not(language: [nil, ""])
-                           .order(:language)
-                           .pluck(:language),
-                       @filters[:language]
-                     ),
+                     options_for_select(language_options, @filters[:language]),
                      include_blank: "Idioma" %>
-
+                     
       <%= select_tag :sort,
                      options_for_select(sort_options, @sort),
                      include_blank: "Ordenar por",

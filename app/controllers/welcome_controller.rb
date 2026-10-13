@@ -24,7 +24,7 @@ class WelcomeController < ApplicationController
   private
 
   def filter_params
-    params.permit(:category_id, :condition, :modality, :status, :publisher, :published_year, :language)
+    params.permit(:category_id, :condition, :modality, :status, :publisher, :year_from, :year_to, :language)
           .to_h
           .symbolize_keys
   end
