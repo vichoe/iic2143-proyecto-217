@@ -24,13 +24,15 @@
 
   <div class="search">
     <%= form_with url: root_path, method: :get do |f| %>
-      <% if user_signed_in? && current_user.admin? %>
-        <%= f.search_field :q, value: @query, placeholder: "Buscar libros o usuarios..." %>
-      <% else %>
-        <%= f.search_field :q, value: @query, placeholder: "Buscar libros..." %>
-      <% end %>
+      <%= f.search_field :q, value: @query, placeholder: "Buscar libros por título o autor..." %>
+      <%= f.submit "Buscar libros", name: nil %>
+    <% end %>
 
-      <%= f.submit "Buscar", name: nil %>
+    <% if can_search_users? %>
+      <%= form_with url: root_path, method: :get do |f| %>
+        <%= f.search_field :user_q, value: @user_query, placeholder: "Buscar usuarios por nombre..." %>
+        <%= f.submit "Buscar usuarios", name: nil %>
+      <% end %>
     <% end %>
   </div>
 
@@ -115,15 +117,12 @@
   </div>
 
 
-  <div class="results">
-    <% if @query.present? %>
-      <p>
-        Resultados para "<%= @query %>"
-        (<%= link_to "limpiar búsqueda", root_path %>)
-      </p>
+  <% if @user_query.present? && can_search_users? %>
+    <div class="results">
+      <h2>Usuarios que coinciden con "<%= @user_query %>"</h2>
+      <p><%= link_to "limpiar búsqueda de usuarios", root_path %></p>
 
-      <% if user_signed_in? && current_user.admin? && @users.any? %>
-        <h2>Usuarios</h2>
+      <% if @users.any? %>
         <ul>
           <% @users.each do |user| %>
             <li>
@@ -134,17 +133,24 @@
             </li>
           <% end %>
         </ul>
+      <% else %>
+        <p>No encontramos usuarios con ese nombre.</p>
       <% end %>
+    </div>
+  <% end %>
 
+  <div class="results">
+    <% if @query.present? %>
+      <p>
+        Resultados para "<%= @query %>"
+        (<%= link_to "limpiar búsqueda", root_path %>)
+      </p>
       <h2>Libros</h2>
-
     <% elsif filters_applied %>
       <h2>Resultados filtrados</h2>
-
     <% else %>
       <h2>Publicaciones recientes</h2>
     <% end %>
-
 
     <% if @books.any? %>
       <ul>
@@ -159,25 +165,16 @@
             <%= link_to book.title, book_path(book) %>
             de <%= book.author %>
             · publicado por
-            <%= link_to book.user.name, user_path(book.user) %>
+            <%= can_view_profile?(book.user) ? link_to(book.user.name, user_path(book.user)) : book.user.name %>
           </li>
         <% end %>
       </ul>
-
     <% elsif @query.present? %>
-      <p>
-        No encontramos libros que coincidan con tu búsqueda.
-      </p>
-
+      <p>No encontramos libros que coincidan con tu búsqueda.</p>
     <% elsif filters_applied %>
-      <p>
-        No hay libros que coincidan con los filtros aplicados.
-      </p>
-
+      <p>No hay libros que coincidan con los filtros aplicados.</p>
     <% else %>
-      <p>
-        Todavía no hay libros publicados.
-      </p>
+      <p>Todavía no hay libros publicados.</p>
     <% end %>
   </div>
 

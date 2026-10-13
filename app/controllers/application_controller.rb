@@ -6,8 +6,7 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   before_action :configure_permitted_parameters, if: :devise_controller?
-  helper_method :public_profiles?, :can_view_profile?
-
+  helper_method :public_profiles?, :can_view_profile?, :can_search_users?
   protected
 
   def configure_permitted_parameters
@@ -22,5 +21,9 @@ class ApplicationController < ActionController::Base
 
   def can_view_profile?(user)
     public_profiles? || (user_signed_in? && (current_user.admin? || current_user == user))
+  end
+
+  def can_search_users?
+    user_signed_in? && current_user.admin?
   end
 end
