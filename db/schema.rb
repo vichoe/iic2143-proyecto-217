@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_13_152905) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_14_173659) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -95,6 +95,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_152905) do
     t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "book_id", null: false
+    t.datetime "created_at", null: false
+    t.string "message"
+    t.boolean "read"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["book_id"], name: "index_notifications_on_book_id"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
   create_table "reviews", force: :cascade do |t|
     t.text "comment"
     t.datetime "created_at", null: false
@@ -126,6 +137,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_152905) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "wishlist_items", force: :cascade do |t|
+    t.string "author"
+    t.bigint "book_id", null: false
+    t.datetime "created_at", null: false
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["book_id"], name: "index_wishlist_items_on_book_id"
+    t.index ["user_id"], name: "index_wishlist_items_on_user_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "books", "categories"
@@ -135,7 +157,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_152905) do
   add_foreign_key "exchange_requests", "users", column: "requester_id"
   add_foreign_key "messages", "exchange_requests"
   add_foreign_key "messages", "users", column: "sender_id"
+  add_foreign_key "notifications", "books"
+  add_foreign_key "notifications", "users"
   add_foreign_key "reviews", "exchange_requests"
   add_foreign_key "reviews", "users", column: "reviewee_id"
   add_foreign_key "reviews", "users", column: "reviewer_id"
+  add_foreign_key "wishlist_items", "books"
+  add_foreign_key "wishlist_items", "users"
 end

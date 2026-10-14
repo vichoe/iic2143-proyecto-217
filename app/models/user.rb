@@ -12,6 +12,9 @@ class User < ApplicationRecord
   has_many :written_reviews, class_name: "Review", foreign_key: :reviewer_id, dependent: :destroy
   has_many :received_reviews, class_name: "Review", foreign_key: :reviewee_id, dependent: :destroy
 
+  has_many :wishlist_items, dependent: :destroy
+  has_many :notifications, dependent: :destroy
+
   validates :name, presence: true, length: { maximum: 50 }
   validates :bio, length: { maximum: 500 }
 

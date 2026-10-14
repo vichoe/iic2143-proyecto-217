@@ -3,6 +3,8 @@ require "test_helper"
 class WelcomeControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
+  fixtures :all
+
   test "con perfiles públicos, la portada enlaza al perfil del dueño" do
     with_public_profiles(true) do
       get root_path

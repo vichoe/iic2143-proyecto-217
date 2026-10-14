@@ -1,0 +1,33 @@
+<h1>Mi lista de deseos</h1>
+
+<%= form_with model: WishlistItem.new,
+              url: wishlist_items_path do |f| %>
+  <%= f.label :title, "Título" %>
+  <%= f.text_field :title, required: true %>
+
+  <%= f.label :author, "Autor" %>
+  <%= f.text_field :author, required: true %>
+
+  <%= f.submit "Agregar libro" %>
+<% end %>
+
+<h2>Libros guardados</h2>
+
+<% @wishlist_items.each do |item| %>
+  <div>
+    <strong><%= item.title %></strong>
+    — <%= item.author %>
+
+    <% if item.book.present? %>
+      <span>Disponible</span>
+    <% else %>
+      <span>Aún no disponible</span>
+    <% end %>
+
+    <%= link_to "Editar", edit_wishlist_item_path(item) %>
+
+    <%= button_to "Eliminar",
+                  wishlist_item_path(item),
+                  method: :delete %>
+  </div>
+<% end %>
