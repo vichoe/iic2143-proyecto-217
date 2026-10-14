@@ -4,14 +4,41 @@ LINK DE RENDER: https://two026-2-grupo-217.onrender.com/
 
 ### Uso de IA 
 
-Principalmente se uso Claude para depuración y creacion de testcases
+Principalmente se uso Claude para depuración y creacion de testcases y guía en areas que no manejabamos con certeza. Cabe destacar que Claude no hizo ningun push, los pushes fueron manuales y el codigo fue revisado y adaptado a lo nuestro.
+
+Tambien lo usamos para guiarnos con el manejo de ramas al inicio, aunque despues le agarramos mas mano.
+
+#### ¿Para qué se usó?
+
+| Area | Inteligencia Artificial (lo que hizo la IA)| Inteligencia Artesanal (lo que hicimos nosotros) |
+|---|---|---|
+| Modelo E/R y base de datos | Primera version del diagrama con relaciones | Rediseñar ciertos aspectos del diagrama y usar nombres en ingles para las tablas |
+| Configuración (Devise, Active Storage, Render) | Guió la instalación de Devise y Active Storage, y la configuración del Build Command de Render (`db:migrate:primary`, seeds, `:async` en vez de Solid Queue) | Ejecutamos y verificamos cada paso, revisamos los logs de Render y decidimos los cambios |
+| Depuración | orrecion de errores en consola, ya sea en el repositorio o en el setup de Render. | Probamos los errores y aplicamos lo propuesto por la IA |
+| Features | Sugirió codigo inicial para algunas caracteristicas del programa | Corregimos cosas que no nos parecian, como los perfiles publicos (aunque tenemos un config que nos deja hacer los perfiles publicos con un cambio de linea) |
+| Tests | Propuso tests de modelos y controladores | Revisamos que probaran los casos correctos y los ajustamos cuando cambio el comportamiento |
+
+#### Uso por integrante
+
+| Integrante | Uso de IA |
+|---|---|
+| Vicente | Agilizar creacion de BBDD, setup de Devise, depuración y testeos |
+| Antonella | tbd |
+| Isidora | tbd |
+
+#### Recursos externos utilizados
+- Configuración de Rubocop del curso: https://iic2143.github.io/Setup-Guides/guides/tools/rubocop/
+- Video de configuración de Render: https://www.youtube.com/watch?v=MFTmX-EI-M4
+- Guías de Rails: https://guides.rubyonrails.org/
+- Documentación de Devise: https://github.com/heartcombo/devise
+- Documentación de Render: https://render.com/docs
 
 ### Notas
 Nos daba error al hacer Pull Request en `System Test` y es porque no existía `test/system`.
 Cuando Rails genera un proyecto nuevo con soporte de tests de sistema, siempre crea esa carpeta con un archivo base. Puede ser que se te borrara Vicho o se ignorara en el `.gitignore`
 
 **Probando rubocop**
-````bash
+```bash
 bundle exec rubocop
 ```
 Ejecuta la herramienta RuboCop usando exactamente la versión de la gema especificada en el Gemfile de tu proyecto actual, lo cual me generó:
