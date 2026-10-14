@@ -8,6 +8,8 @@ class Book < ApplicationRecord
   has_many :exchange_requests, dependent: :destroy
   has_many :offered_in_requests, class_name: "ExchangeRequest", foreign_key: :offered_book_id, dependent: :nullify
 
+  has_many :wishlist_items, dependent: :nullify
+
   enum :condition, { brand_new: 0, like_new: 1, good: 2, acceptable: 3 }, validate: true
   enum :modality, { exchange: 0, loan: 1 }, validate: true
   enum :status, { available: 0, reserved: 1, exchanged: 2, withdrawn: 3 }, validate: true

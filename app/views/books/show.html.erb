@@ -1,6 +1,34 @@
 <p><%= link_to "← Volver", root_path %></p>
 
-<h1><%= @book.title %></h1>
+<h1>
+  <%= @book.title %>
+
+  <% if user_signed_in? %>
+    <% wishlist_item = current_user.wishlist_items.find_by(book: @book) %>
+
+    <% if wishlist_item %>
+      <%= button_to "♥",
+                    wishlist_item_path(wishlist_item),
+                    method: :delete,
+                    class: "wishlist-heart active",
+                    title: "Eliminar de mi lista de deseos" %>
+    <% else %>
+      <%= form_with model: WishlistItem.new,
+                    url: wishlist_items_path,
+                    method: :post,
+                    class: "wishlist-heart-form" do |f| %>
+        <%= f.hidden_field :book_id, value: @book.id %>
+        <%= f.hidden_field :title, value: @book.title %>
+        <%= f.hidden_field :author, value: @book.author %>
+
+        <%= f.submit "♡",
+                     class: "wishlist-heart",
+                     title: "Agregar a mi lista de deseos" %>
+      <% end %>
+    <% end %>
+  <% end %>
+</h1>
+
 <p>de <strong><%= @book.author %></strong></p>
 
 <% if @book.withdrawn? %>

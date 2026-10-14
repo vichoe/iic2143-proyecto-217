@@ -1,37 +1,53 @@
 <div class="page-container">
 
   <div class="top-bar">
-    <% if user_signed_in? %>
-      <%= link_to user_path(current_user) do %>
-        <%= avatar_for(current_user) %>
-        Hola, <%= current_user.name %>
-      <% end %>
-
-      <%= link_to "Publicar libro", new_book_path %>
-      <%= link_to "Mis solicitudes", exchange_requests_path %>
-      <% if current_user.admin? %>
-        <%= link_to "Administrar usuarios", users_path %>
-      <% end %>
-
-      <%= button_to "Cerrar sesión",
-                    destroy_user_session_path,
-                    method: :delete %>
-    <% else %>
-      <%= link_to "Iniciar sesión / Registrarse",
-                  new_user_session_path %>
+  <% if user_signed_in? %>
+    <%= link_to user_path(current_user) do %>
+      <%= avatar_for(current_user) %>
+      Hola, <%= current_user.name %>
     <% end %>
-  </div>
+
+    <%= link_to "Publicar libro", new_book_path %>
+
+    <%= link_to "Mis solicitudes", exchange_requests_path %>
+
+    <%= link_to "Lista de deseos", wishlist_items_path %>
+
+    <% if current_user.admin? %>
+      <%= link_to "Administrar usuarios", users_path %>
+    <% end %>
+
+    <%= button_to "Cerrar sesión",
+                  destroy_user_session_path,
+                  method: :delete %>
+  <% else %>
+    <%= link_to "Iniciar sesión / Registrarse",
+                new_user_session_path %>
+  <% end %>
+</div>
 
 
   <div class="search">
     <%= form_with url: root_path, method: :get do |f| %>
-      <%= f.search_field :q, value: @query, placeholder: "Buscar libros por título o autor..." %>
+      <%= f.search_field :q,
+                        value: @query,
+                        placeholder: "Buscar libros por título o autor..." %>
+
       <%= f.submit "Buscar libros", name: nil %>
+
+      <% if @query.present? %>
+        <%= link_to "Limpiar búsqueda",
+                    root_path,
+                    class: "clear-search" %>
+      <% end %>
     <% end %>
 
     <% if can_search_users? %>
       <%= form_with url: root_path, method: :get do |f| %>
-        <%= f.search_field :user_q, value: @user_query, placeholder: "Buscar usuarios por nombre..." %>
+        <%= f.search_field :user_q,
+                          value: @user_query,
+                          placeholder: "Buscar usuarios por nombre..." %>
+
         <%= f.submit "Buscar usuarios", name: nil %>
       <% end %>
     <% end %>
@@ -125,7 +141,6 @@
     <% if @query.present? %>
       <p>
         Resultados para "<%= @query %>"
-        (<%= link_to "limpiar búsqueda", root_path %>)
       </p>
       <h2>Libros</h2>
     <% elsif filters_applied %>
