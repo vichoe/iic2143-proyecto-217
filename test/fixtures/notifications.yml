@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: ana
+  book: hobbit
+  message: "El libro está disponible."
+  read: false
+
+two:
+  user: beto
+  book: dune
+  message: "El libro está disponible."
+  read: false

@@ -1,0 +1,11 @@
+<h1>Editar libro deseado</h1>
+
+<%= form_with model: @wishlist_item do |f| %>
+  <%= f.label :title, "Título" %>
+  <%= f.text_field :title, required: true %>
+
+  <%= f.label :author, "Autor" %>
+  <%= f.text_field :author, required: true %>
+
+  <%= f.submit "Guardar cambios" %>
+<% end %>
