@@ -46,6 +46,22 @@ class ExchangeRequest < ApplicationRecord
       notify_requester("#{owner.name} rechazó tu solicitud por \"#{book.title}\".")
     end 
   end
+  
+  #MENSAJERIA NUEVO
+  #la conversacion provada se habilita cuando la solicitud fue aceptada (o ya se completó)
+  def chat_open?
+    accepted? || completed?
+  end
+
+  #solo dos participantes pueden ver y escribir en la conversación
+  def chat_open_for?(user)
+    chat_open? && participant?(user)
+  end 
+
+  #la otra persona de la conversación (si soy quien pidió, el dueño; y al revés)
+  def other_participant(user)
+    requester == user ? owner : requester 
+  end
 
   private
 
