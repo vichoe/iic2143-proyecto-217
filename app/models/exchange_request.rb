@@ -25,7 +25,34 @@ class ExchangeRequest < ApplicationRecord
     user.present? && (requester_id == user.id || book.user_id == user.id)
   end
 
+  #el dueño ACEPTA: la solicitud es aceptada y los libros involucrados quedan reservados
+  #(en proceso de transacción).
+  #las otras solicitudes pendientes por el mimso libro se rechazan porque ya no se pueden concretar:c
+  def accept!
+    transaction do 
+      #si algo falla en la mitad, se deshace todo (asi no queda una soli aceptada con el libro sin reservar)
+      update!(status: :accepted, responded_at: Time.current)
+      book.reserved! #el '!' lanza un error si no se puede guardar en vez de quedarse piolita fallando
+      offered_book&.reserved!
+      notify_requester("#{owner.name} aceptó tu solicitud por \"#{book.title}\".")
+      book.exchange_requests.pending.where.not(id: id).find_each(&:reject!)
+    end
+  end
+
+  #el dueño RECHAZA: la solicitud queda rechazada y el libro sigue estando disponible
+  def reject!
+    transaction do
+      update!(status: :rejected, responded_at: Time.current)
+      notify_requester("#{owner.name} rechazó tu solicitud por \"#{book.title}\".")
+    end 
+  end
+
   private
+
+  def notify_requester(text)
+    Notification.create!(user: requester, book: book, message: text, read: false)
+  end
+
 
   def requester_is_not_owner
     return if book.nil? || requester.nil?

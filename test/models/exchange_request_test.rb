@@ -52,4 +52,23 @@ class ExchangeRequestTest < ActiveSupport::TestCase
     duplicate = ExchangeRequest.new(requester: users(:beto), book: books(:hobbit), offered_book: books(:dune))
     assert_not duplicate.valid?
   end
+
+  #nuevos test unitarios
+  
+  test "accept! acepta la solicitud y reserva los libros" do
+    request = exchange_requests(:beto_wants_hobbit)
+    request.accept!
+
+    assert request.accepted?
+    assert request.book.reserved?
+    assert request.offered_book.reserved?
+  end
+
+  test "reject! rechaza sin cambiar la disponibilidad del libro" do
+    request = exchange_requests(:beto_wants_hobbit)
+    request.reject!
+
+    assert request.rejected?
+    assert request.book.available?
+  end
 end
