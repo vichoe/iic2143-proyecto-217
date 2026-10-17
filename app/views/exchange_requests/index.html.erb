@@ -22,3 +22,36 @@
 <% else %>
   <p>Todavía no has enviado solicitudes.</p>
 <% end %>
+
+<!--nueo-->
+
+<h2>Recibidas</h2>
+<% if @received_requests.any? %>
+  <ul>
+    <% @received_requests.each do |request| %>
+      <li>
+        <%= link_to request.requester.name, user_path(request.requester) %>
+        quiere <%= link_to request.book.title, book_path(request.book) %>
+        <% if request.offered_book %>
+          · ofrece: <%= link_to request.offered_book.title, book_path(request.offered_book) %>
+        <% else %>
+          · préstamo
+        <% end %>
+        · <strong><%= request_status_label(request) %></strong>
+        · <%= l(request.created_at.to_date) %>
+        <% if request.message.present? %>
+          <br><em>"<%= request.message %>"</em>
+        <% end %>
+
+        <% if request.pending? %>
+          <%= button_to "Aceptar", accept_exchange_request_path(request), method: :patch,
+                        form: { data: { turbo_confirm: "¿Aceptar esta solicitud? El libro quedará reservado." } } %>
+          <%= button_to "Rechazar", reject_exchange_request_path(request), method: :patch,
+                        form: { data: { turbo_confirm: "¿Rechazar esta solicitud?" } } %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>Todavía no has recibido solicitudes.</p>
+<% end %>
