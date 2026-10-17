@@ -85,4 +85,70 @@ class ExchangeRequestsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "a[href=?]", book_path(books(:hobbit))
   end
+
+  #nuevooo
+  test "el dueño ve las solicitudes recibidas con botones para responder" do
+    sign_in users(:ana)
+    get exchange_requests_path
+    assert_response :success
+    assert_select "form[action=?]", accept_exchange_request_path(exchange_requests(:beto_wants_hobbit))
+    assert_select "form[action=?]", reject_exchange_request_path(exchange_requests(:beto_wants_hobbit))
+  end
+
+  test "aceptar una solicitud reserva los libros y notifica al solicitante" do
+    sign_in users(:ana)
+    request = exchange_requests(:beto_wants_hobbit)
+
+    assert_difference(-> { users(:beto).notifications.count }, 1) do
+      patch accept_exchange_request_path(request)
+    end
+
+    assert_redirected_to exchange_requests_path
+    assert request.reload.accepted?
+    assert_not_nil request.responded_at
+    assert books(:hobbit).reload.reserved?
+    assert books(:dune).reload.reserved?
+  end
+
+  test "rechazar una solicitud mantiene el libro disponible y notifica al solicitante" do
+    sign_in users(:ana)
+    request = exchange_requests(:beto_wants_hobbit)
+
+    assert_difference(-> { users(:beto).notifications.count }, 1) do
+      patch reject_exchange_request_path(request)
+    end
+
+    assert_redirected_to exchange_requests_path
+    assert request.reload.rejected?
+    assert books(:hobbit).reload.available?
+  end
+
+  test "solo el dueño del libro puede responder" do
+    sign_in users(:beto) # Beto es quien pidió, no el dueño
+    patch accept_exchange_request_path(exchange_requests(:beto_wants_hobbit))
+
+    assert_redirected_to exchange_requests_path
+    assert exchange_requests(:beto_wants_hobbit).reload.pending?
+    assert books(:hobbit).reload.available?
+  end
+
+  test "no se puede responder una solicitud que ya fue respondida" do
+    request = exchange_requests(:beto_wants_hobbit)
+    request.reject!
+
+    sign_in users(:ana)
+    patch accept_exchange_request_path(request)
+
+    assert request.reload.rejected?
+    assert books(:hobbit).reload.available?
+  end
+
+  test "al aceptar se rechazan las otras solicitudes pendientes del mismo libro" do
+    other = ExchangeRequest.create!(requester: users(:carla), book: books(:hobbit), offered_book: carla_book)
+
+    sign_in users(:ana)
+    patch accept_exchange_request_path(exchange_requests(:beto_wants_hobbit))
+
+    assert other.reload.rejected?
+  end
 end

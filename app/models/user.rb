@@ -15,6 +15,10 @@ class User < ApplicationRecord
   has_many :wishlist_items, dependent: :destroy
   has_many :notifications, dependent: :destroy
 
+  #estas son las solicitudes que llegan a 'mis libros', Rails las encuentra pasando por books
+  has_many :received_exchange_requests, through: :books, source: :exchange_requests
+
+
   validates :name, presence: true, length: { maximum: 50 }
   validates :bio, length: { maximum: 500 }
 
