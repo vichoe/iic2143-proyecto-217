@@ -8,12 +8,13 @@ Rails.application.routes.draw do
     resources :exchange_requests, only: [:new, :create]
   end
 
-  resources :exchange_requests, only: [:index] do
+  resources :exchange_requests, only: [:index, :show] do
     member do #'member' crea son para la solicitud en particular tal que la url lleva a su :id
       patch :accept #URL: /exchange_request/id/accept VA A exchange_request#accept
       #donde el helper seria accept_exchange_request_path(request)
       patch :reject
     end
+    resources :messages, only: [:create]
   end
 
   resources :users, only: [:index, :show]

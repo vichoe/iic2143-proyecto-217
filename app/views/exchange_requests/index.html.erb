@@ -16,6 +16,10 @@
         <% end %>
         · <strong><%= request_status_label(request) %></strong>
         · <%= l(request.created_at.to_date) %>
+        <% if request.chat_open? %>
+          · <%= link_to "Ver conversación", exchange_request_path(request) %>
+        <% end %>
+
       </li>
     <% end %>
   </ul>
@@ -39,6 +43,10 @@
         <% end %>
         · <strong><%= request_status_label(request) %></strong>
         · <%= l(request.created_at.to_date) %>
+        <% if request.chat_open? %>
+          · <%= link_to "Ver conversación", exchange_request_path(request) %>
+        <% end %>
+
         <% if request.message.present? %>
           <br><em>"<%= request.message %>"</em>
         <% end %>
