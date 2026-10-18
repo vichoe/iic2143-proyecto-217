@@ -1,0 +1,27 @@
+<p><%= link_to "← Volver a mis solicitudes", exchange_requests_path %></p>
+
+<h1>Conversación sobre "<%= @exchange_request.book.title %>"</h1>
+<p>
+  Con <strong><%= @exchange_request.other_participant(current_user).name %></strong>
+  · <%= request_status_label(@exchange_request) %>
+</p>
+
+<div id="mensajes">
+  <% if @messages.any? %>
+    <% @messages.each do |message| %>
+      <div class="message">
+        <strong><%= message.sender == current_user ? "Tú" : message.sender.name %></strong>
+        <small><%= l(message.created_at, format: :short) %></small>
+        <%= simple_format message.body %>
+      </div>
+    <% end %>
+  <% else %>
+    <p>Todavía no hay mensajes. ¡Escribe el primero para coordinar la entrega!</p>
+  <% end %>
+</div>
+
+<%= form_with model: [@exchange_request, @message], id: "nuevo-mensaje" do |f| %>
+  <%= f.text_area :body, rows: 3, required: true, maxlength: 2000, placeholder: "Escribe un mensaje..." %>
+  <br>
+  <%= f.submit "Enviar" %>
+<% end %>

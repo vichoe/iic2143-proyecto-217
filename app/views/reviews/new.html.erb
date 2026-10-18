@@ -1,0 +1,28 @@
+<p><%= link_to "← Volver a Mis solicitudes", exchange_requests_path %></p>
+
+<h1>Calificar a <%= @exchange_request.other_participant(current_user).name %></h1>
+<p>Intercambio por <strong><%= @exchange_request.book.title %></strong></p>
+
+<%= form_with model: [@exchange_request, @review] do |f| %>
+  <% if @review.errors.any? %>
+    <ul>
+      <% @review.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <p>
+    <%= f.label :score, "Puntuación" %>
+    <%= f.select :score,
+                 (1..5).map { |n| ["★" * n, n] }.reverse,
+                 include_blank: "Elige de 1 a 5 estrellas" %>
+  </p>
+
+  <p>
+    <%= f.label :comment, "Comentario" %><br>
+    <%= f.text_area :comment, rows: 4, maxlength: 1000 %>
+  </p>
+
+  <%= f.submit "Enviar calificación" %>
+<% end %>

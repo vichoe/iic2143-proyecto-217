@@ -47,6 +47,44 @@ class ExchangeRequest < ApplicationRecord
     end 
   end
 
+  #se marca como CONCLUIDO cuando la entrega (o la devolución) ya ocurrió
+  #intercambio: los libros cambiaron de mano y no se vuelven a publicar
+  #préstamo: el libro se devolvió, así que vuelve a estar disponible
+  def complete!
+    transaction do
+      update!(status: :completed, completed_at: Time.current)
+      if book.exchange?
+        book.exchanged!
+        offered_book&.exchanged!
+      else
+        book.available!
+      end
+    end
+  end
+
+
+
+  #MENSAJERIA NUEVO
+  #la conversacion provada se habilita cuando la solicitud fue aceptada (o ya se completó)
+  def chat_open?
+    accepted? || completed?
+  end
+
+  #solo dos participantes pueden ver y escribir en la conversación
+  def chat_open_for?(user)
+    chat_open? && participant?(user)
+  end 
+
+  #la otra persona de la conversación (si soy quien pidió, el dueño; y al revés)
+  def other_participant(user)
+    requester == user ? owner : requester 
+  end
+
+  # e puede calificar si el intercambio concluyo, el usuario participó y todavía no calificoo
+  def can_be_reviewed_by?(user)
+    completed? && participant?(user) && !reviews.exists?(reviewer: user)
+  end
+
   private
 
   def notify_requester(text)

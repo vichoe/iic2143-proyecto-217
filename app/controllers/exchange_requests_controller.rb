@@ -5,6 +5,9 @@ class ExchangeRequestsController < ApplicationController
   before_action :require_requestable_book, only: [:new, :create]
   #nueo
   before_action :set_received_request, only: [:accept, :reject]
+  #nuevecillo de paquete
+  before_action :set_conversation, only: [:show]
+  before_action :set_accepted_request, only: [:complete]
 
   def index
     @sent_requests = current_user.sent_exchange_requests
@@ -14,6 +17,11 @@ class ExchangeRequestsController < ApplicationController
     @received_requests = current_user.received_exchange_requests
                                      .includes(:book, :requester, :offered_book)
                                      .order(created_at: :desc)
+  end
+
+  def show
+    @messages = @exchange_request.messages.chronological.includes(:sender)
+    @message = Message.new
   end
 
   def new
@@ -51,7 +59,30 @@ class ExchangeRequestsController < ApplicationController
                 notice: "Rechazaste la solicitud. Le avisamos a #{@exchange_request.requester.name}."
   end
 
+  def complete
+    @exchange_request.complete!
+  redirect_to exchange_requests_path,
+              notice: "Marcaste el intercambio como concluido. Ya puedes calificar a la otra parte."
+end
+
   private
+
+  #nuevecillo
+  #solo los participantes de una solicitud aceptada pueden ver la conversacion
+  def set_conversation
+    @exchange_request = ExchangeRequest.find_by(id: params[:id])
+    return if @exchange_request&.chat_open_for?(current_user)
+
+    redirect_to exchange_requests_path, alert: "No puedes acceder a esa conversación."
+  end
+
+  #cualquiera de los dos participantes puede concluir una solicitud ya aceptada
+  def set_accepted_request
+    @exchange_request = ExchangeRequest.find_by(id: params[:id])
+    return if @exchange_request&.accepted? && @exchange_request.participant?(current_user)
+
+    redirect_to exchange_requests_path, alert: "No puedes concluir esa solicitud."
+  end
 
   #nueo
   #solo el dueño del libro puede responder (las solicitudes pendientes)
