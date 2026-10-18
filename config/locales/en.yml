@@ -29,3 +29,33 @@
 
 en:
   hello: "Hello world"
+ 
+  activerecord:
+    models:
+      user:
+        one: "usuario"
+        other: "usuarios"
+    attributes:
+      user:
+        name: "Nombre"
+        email: "Correo electrónico"
+        password: "Contraseña"
+        password_confirmation: "Confirmación de contraseña"
+        current_password: "Contraseña actual"
+        city: "Ciudad"
+        bio: "Biografía"
+        avatar: "Foto de perfil"
+        remember_me: "Recordarme"
+ 
+  errors:
+    messages:
+      blank: "no puede estar en blanco"
+      taken: "ya está en uso"
+      invalid: "no es válido"
+      confirmation: "no coincide con %{attribute}"
+      too_short:
+        one: "debe tener al menos 1 carácter"
+        other: "debe tener al menos %{count} caracteres"
+      too_long:
+        one: "debe tener como máximo 1 carácter"
+        other: "debe tener como máximo %{count} caracteres"
