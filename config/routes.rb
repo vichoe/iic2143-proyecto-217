@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       patch :accept #URL: /exchange_request/id/accept VA A exchange_request#accept
       #donde el helper seria accept_exchange_request_path(request)
       patch :reject
+      patch :complete
     end
     resources :messages, only: [:create]
   end

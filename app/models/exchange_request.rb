@@ -46,7 +46,24 @@ class ExchangeRequest < ApplicationRecord
       notify_requester("#{owner.name} rechazó tu solicitud por \"#{book.title}\".")
     end 
   end
-  
+
+  #se marca como CONCLUIDO cuando la entrega (o la devolución) ya ocurrió
+  #intercambio: los libros cambiaron de mano y no se vuelven a publicar
+  #préstamo: el libro se devolvió, así que vuelve a estar disponible
+  def complete!
+    transaction do
+      update!(status: :completed, completed_at: Time.current)
+      if book.exchange?
+        book.exchanged!
+        offered_book&.exchanged!
+      else
+        book.available!
+      end
+    end
+  end
+
+
+
   #MENSAJERIA NUEVO
   #la conversacion provada se habilita cuando la solicitud fue aceptada (o ya se completó)
   def chat_open?
