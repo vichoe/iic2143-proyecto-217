@@ -19,7 +19,16 @@
         <% if request.chat_open? %>
           · <%= link_to "Ver conversación", exchange_request_path(request) %>
         <% end %>
-
+        <% if request.accepted? %>
+          · <%= button_to "Marcar como concluido",
+                          complete_exchange_request_path(request),
+                          method: :patch,
+                          form: { style: "display: inline;",
+                                  data: { turbo_confirm: "¿Confirmas que la entrega ya se realizó?" } } %>
+        <% end %>
+        <% if request.can_be_reviewed_by?(current_user) %>
+          · <%= link_to "Calificar", new_exchange_request_review_path(request) %>
+        <% end %>
       </li>
     <% end %>
   </ul>
@@ -45,6 +54,17 @@
         · <%= l(request.created_at.to_date) %>
         <% if request.chat_open? %>
           · <%= link_to "Ver conversación", exchange_request_path(request) %>
+        <% end %>
+        <% if request.accepted? %>
+          · <%= button_to "Marcar como concluido",
+                          complete_exchange_request_path(request),
+                          method: :patch,
+                          form: { style: "display: inline;",
+                                  data: { turbo_confirm: "¿Confirmas que la entrega ya se realizó?" } } %>
+        <% end %>
+
+        <% if request.can_be_reviewed_by?(current_user) %>
+          · <%= link_to "Calificar", new_exchange_request_review_path(request) %>
         <% end %>
 
         <% if request.message.present? %>

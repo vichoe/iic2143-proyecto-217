@@ -151,4 +151,51 @@ class ExchangeRequestsControllerTest < ActionDispatch::IntegrationTest
 
     assert other.reload.rejected?
   end
+
+  test "un participante concluye un intercambio y los libros quedan intercambiados" do
+  exchange = exchange_requests(:beto_wants_hobbit)
+  books(:hobbit).update!(modality: :exchange)
+  exchange.update!(status: :accepted)
+  sign_in users(:beto)
+
+  patch complete_exchange_request_path(exchange)
+
+  assert_redirected_to exchange_requests_path
+  assert exchange.reload.completed?
+  assert_not_nil exchange.completed_at
+  assert books(:hobbit).reload.exchanged?
+  assert books(:dune).reload.exchanged?
+end
+
+  test "al concluir un préstamo el libro vuelve a estar disponible" do
+    books(:foundation).update!(modality: :loan, status: :available)
+    exchange = ExchangeRequest.create!(requester: users(:carla), book: books(:foundation), status: :accepted)
+    books(:foundation).reserved!
+    sign_in users(:beto)
+
+    patch complete_exchange_request_path(exchange)
+
+    assert exchange.reload.completed?
+    assert books(:foundation).reload.available?
+  end
+
+  test "no se puede concluir una solicitud pendiente" do
+    exchange = exchange_requests(:beto_wants_hobbit)
+    sign_in users(:ana)
+
+    patch complete_exchange_request_path(exchange)
+
+    assert_redirected_to exchange_requests_path
+    assert exchange.reload.pending?
+  end
+
+  test "alguien que no participa no puede concluir la solicitud" do
+    exchange = exchange_requests(:beto_wants_hobbit)
+    exchange.update!(status: :accepted)
+    sign_in users(:carla)
+
+    patch complete_exchange_request_path(exchange)
+
+    assert exchange.reload.accepted?
+  end
 end
