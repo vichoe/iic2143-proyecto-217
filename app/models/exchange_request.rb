@@ -80,6 +80,11 @@ class ExchangeRequest < ApplicationRecord
     requester == user ? owner : requester 
   end
 
+  # e puede calificar si el intercambio concluyo, el usuario participó y todavía no calificoo
+  def can_be_reviewed_by?(user)
+    completed? && participant?(user) && !reviews.exists?(reviewer: user)
+  end
+
   private
 
   def notify_requester(text)

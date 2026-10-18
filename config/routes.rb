@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       patch :complete
     end
     resources :messages, only: [:create]
+    resources :reviews, only: [:new, :create]
   end
 
   resources :users, only: [:index, :show]
