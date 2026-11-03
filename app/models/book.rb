@@ -18,6 +18,12 @@ class Book < ApplicationRecord
   validates :title, :author, presence: true, length: { maximum: 150 }
   validates :published_year,
             numericality: { only_integer: true, less_than_or_equal_to: Date.current.year, allow_nil: true }
+  validates :available_from, :available_until, presence: true, on: :create, if: :loan?
+  # presence: true: el campo no puede venir vacío.
+  #on: :create: solo se revisa al crear el libro, no al editarlo ni al cambiarle el estado con available! o reserved!.
+  #Por eso los libros antiguos no se rompen.
+  #if: :loan?: solo aplica si la modalidad es préstamo. 
+  #loan? existe gracias al enum :modality que ya tienen en el modelo.
 
   scope :search, lambda { |query|
     term = "%#{sanitize_sql_like(query)}%"

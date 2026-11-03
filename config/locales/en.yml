@@ -46,6 +46,9 @@ en:
         bio: "Biografía"
         avatar: "Foto de perfil"
         remember_me: "Recordarme"
+      book:
+        available_from: "Disponible desde"
+        available_until: "Disponible hasta"
  
   errors:
     messages:

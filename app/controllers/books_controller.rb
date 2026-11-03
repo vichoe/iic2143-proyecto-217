@@ -53,7 +53,8 @@ class BooksController < ApplicationController
 
   def book_params
     params.require(:book).permit(:title, :author, :description, :publisher, :published_year, :language,
-                                 :category_id, :condition, :modality, :cover_image, photos: [])
+                                 :category_id, :condition, :modality, :cover_image, :available_from, :available_until,
+                                 photos: [] )
   end
 
   # Al editar, si no se eligen fotos nuevas se mantienen las que ya tenía.
