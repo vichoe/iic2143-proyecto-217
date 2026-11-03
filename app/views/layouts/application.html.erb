@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Iic2143 Proyecto 217" %></title>
+    <title><%= content_for(:title) || "Book Rack (IIC2143 Proyecto 217)" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Iic2143 Proyecto 217">
@@ -24,11 +24,49 @@
   </head>
 
   <body>
+    <% unless devise_controller? %>
+      <header class="site-header">
+        <div class="site-header__inner">
+          <span class="site-brand">Book Rack</span>
+
+          <nav class="site-nav" aria-label="Navegación principal">
+            <%= link_to "Catálogo", root_path %>
+
+            <% if user_signed_in? %>
+              <%= link_to "Mi perfil", user_path(current_user) %>
+              <%= link_to "Mis solicitudes", exchange_requests_path %>
+              <%= link_to "Wishlist", wishlist_items_path %>
+
+              <% if current_user.admin? %>
+                <%= link_to "Administración", users_path %>
+              <% end %>
+
+              <%= link_to "Publicar libro",
+                          new_book_path,
+                          class: "nav-publish" %>
+
+              <%= button_to "Cerrar sesión",
+                            destroy_user_session_path,
+                            method: :delete,
+                            class: "nav-logout" %>
+            <% else %>
+              <%= link_to "Iniciar sesión", new_user_session_path %>
+
+              <%= link_to "Registrarse",
+                          new_user_registration_path,
+                          class: "nav-publish" %>
+            <% end %>
+          </nav>
+        </div>
+      </header>
+    <% end %>
+
     <main class="app-content">
       <% flash.each do |type, message| %>
-        <p style="color: <%= type == "notice" ? "green" : "red" %>; text-align: center;">
+        <div class="flash <%= type == "notice" ? "flash--notice" : "flash--alert" %>"
+            role="<%= type == "notice" ? "status" : "alert" %>">
           <%= message %>
-        </p>
+        </div>
       <% end %>
 
       <%= yield %>
