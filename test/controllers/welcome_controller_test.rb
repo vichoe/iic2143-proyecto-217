@@ -84,7 +84,7 @@ class WelcomeControllerTest < ActionDispatch::IntegrationTest
   test "el saludo enlaza al perfil del usuario conectado" do
     sign_in users(:ana)
     get root_path
-    assert_select ".top-bar a[href=?]", user_path(users(:ana))
+    assert_select ".site-nav a[href=?]", user_path(users(:ana))
   end
 
   # Escenario 1: al combinar varios filtros, el sistema muestra
