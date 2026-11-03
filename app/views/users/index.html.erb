@@ -25,7 +25,8 @@
         <th>Correo</th>
         <th>Rol</th>
         <th>Calificación</th>
-        <th>Acción</th>
+        <th>Estado</th>
+        <th>Acciones</th>
       </tr>
     </thead>
 
@@ -41,7 +42,28 @@
             <%= user.average_rating || "Sin calificación" %>
           </td>
           <td>
+            <%= user.suspended? ? "Suspendido" : "Activo" %>
+          </td>
+
+          <td>
             <%= link_to "Ver perfil", user_path(user) %>
+
+            <% unless user == current_user %>
+              <% if user.suspended? %>
+                <%= button_to "Reactivar",
+                              reactivate_user_path(user),
+                              method: :patch %>
+              <% else %>
+                <%= button_to "Suspender",
+                              suspend_user_path(user),
+                              method: :patch,
+                              form: {
+                                data: {
+                                  turbo_confirm: "¿Quieres suspender a este usuario?"
+                                }
+                              } %>
+              <% end %>
+            <% end %>
           </td>
         </tr>
       <% end %>

@@ -187,3 +187,51 @@ body {
   margin-left: 8px;
   white-space: nowrap;
 }
+
+/* Contenedor centrado para todas las páginas */
+.app-content {
+  width: 100%;
+  max-width: 1100px;
+  margin-inline: auto;
+  padding: 24px;
+  min-width: 0;
+}
+
+/* Permitir que las barras se acomoden en pantallas pequeñas */
+.top-bar,
+.wishlist-item,
+.search form {
+  flex-wrap: wrap;
+}
+
+.search form {
+  max-width: 100%;
+  justify-content: center;
+}
+
+.search input[type="search"] {
+  width: 360px;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Mantener imágenes dentro del contenido */
+.app-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 600px) {
+  .app-content {
+    padding: 16px;
+  }
+
+  .page-container {
+    padding-inline: 0;
+  }
+
+  .auth-container {
+    margin: 24px auto;
+    padding: 16px;
+  }
+}

@@ -19,7 +19,12 @@ Rails.application.routes.draw do
     resources :reviews, only: [:new, :create]
   end
 
-  resources :users, only: [:index, :show]
+  resources :users, only: [:index, :show] do
+    member do
+      patch :suspend
+      patch :reactivate
+    end
+  end
 
   resources :wishlist_items, only: [:index, :create, :edit, :update, :destroy]
 
