@@ -24,10 +24,14 @@
   </head>
 
   <body>
-    <% flash.each do |type, message| %>
-      <p style="color: <%= type == "notice" ? "green" : "red" %>; text-align: center;"><%= message %></p>
-    <% end %>
+    <main class="app-content">
+      <% flash.each do |type, message| %>
+        <p style="color: <%= type == "notice" ? "green" : "red" %>; text-align: center;">
+          <%= message %>
+        </p>
+      <% end %>
 
-    <%= yield %>
+      <%= yield %>
+    </main>
   </body>
 </html>

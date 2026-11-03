@@ -109,7 +109,7 @@ end
   end
 
   def load_offerable_books
-    @offerable_books = current_user.books.available.order(:title)
+    @offerable_books = current_user.books.available.exchange.order(:title)
   end
 
   def exchange_request_params

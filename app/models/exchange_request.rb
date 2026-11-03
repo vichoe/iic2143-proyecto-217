@@ -14,6 +14,7 @@ class ExchangeRequest < ApplicationRecord
   validate :offered_book_required_for_exchange
   validate :book_is_available, on: :create
   validate :offered_book_is_available, on: :create
+  validate :offered_book_is_exchange, on: :create
   validate :no_duplicate_pending_request, on: :create
   # El dueño del libro solicitado.
   def owner
@@ -86,6 +87,15 @@ class ExchangeRequest < ApplicationRecord
   end
 
   private
+
+  def offered_book_is_exchange
+    return if offered_book.nil? || offered_book.exchange?
+
+    errors.add(
+      :offered_book,
+      "debe tener modalidad de intercambio; no puede ser un préstamo"
+    )
+  end
 
   def notify_requester(text)
     Notification.create!(user: requester, book: book, message: text, read: false)

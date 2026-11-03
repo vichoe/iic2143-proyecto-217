@@ -1,0 +1,4 @@
+es:
+  devise:
+    failure:
+      suspended: "Tu cuenta está suspendida. Contacta al administrador."

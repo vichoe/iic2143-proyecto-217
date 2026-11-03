@@ -35,4 +35,13 @@ class User < ApplicationRecord
   def average_rating
     received_reviews.average(:score)&.round(1)
   end
+
+  def active_for_authentication?
+    super && !suspended?
+  end
+
+  def inactive_message
+    suspended? ? :suspended : super
+  end
+
 end
