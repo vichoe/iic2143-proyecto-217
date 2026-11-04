@@ -77,6 +77,11 @@
   <li><strong>Publicado por:</strong> <%= avatar_for(@book.user, size: 24) %> <%= link_to @book.user.name, user_path(@book.user) %></li>
   </ul>
 
+<% if @book.loan? && !@book.withdrawn? %>
+  <h2>Calendario de disponibilidad</h2>
+  <%= render "books/loan_calendar", book: @book, month: @calendar_month %>
+<% end %>
+
 <% if @book.description.present? %>
   <h2>Descripción</h2>
   <%= simple_format @book.description %>

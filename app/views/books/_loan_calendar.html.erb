@@ -1,0 +1,36 @@
+<% reserved = book.reserved_periods %>
+<div class="loan-calendar" id="calendario">
+  <div class="loan-calendar__nav">
+    <%= link_to "‹ Anterior", url_for(month: month.prev_month.strftime("%Y-%m"), anchor: "calendario") %>
+    <strong><%= calendar_month_title(month) %></strong>
+    <%= link_to "Siguiente ›", url_for(month: month.next_month.strftime("%Y-%m"), anchor: "calendario") %>
+  </div>
+
+  <table class="loan-calendar__grid">
+    <thead>
+      <tr>
+        <% BooksHelper::WEEKDAY_NAMES.each do |name| %>
+          <th><%= name %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% calendar_weeks(month).each do |week| %>
+        <tr>
+          <% week.each do |date| %>
+            <% state = book.availability_on(date, reserved) %>
+            <td class="calendar-day calendar-day--<%= state %> <%= 'calendar-day--outside' unless date.month == month.month %>">
+              <%= date.day %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <ul class="loan-calendar__legend">
+    <li><span class="calendar-day--available"></span> Disponible</li>
+    <li><span class="calendar-day--reserved"></span> Reservado</li>
+    <li><span class="calendar-day--unavailable"></span> No disponible</li>
+  </ul>
+</div>
