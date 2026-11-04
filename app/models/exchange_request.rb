@@ -34,18 +34,27 @@ class ExchangeRequest < ApplicationRecord
     user.present? && (requester_id == user.id || book.user_id == user.id)
   end
 
-  #el dueño ACEPTA: la solicitud es aceptada y los libros involucrados quedan reservados
-  #(en proceso de transacción).
-  #las otras solicitudes pendientes por el mimso libro se rechazan porque ya no se pueden concretar:c
   def accept!
-    transaction do 
-      #si algo falla en la mitad, se deshace todo (asi no queda una soli aceptada con el libro sin reservar)
+    transaction do
+      # si algo falla en la mitad, se deshace todo
       update!(status: :accepted, responded_at: Time.current)
-      book.reserved! #el '!' lanza un error si no se puede guardar en vez de quedarse piolita fallando
-      offered_book&.reserved!
       notify_requester("#{owner.name} aceptó tu solicitud por \"#{book.title}\".")
-      book.exchange_requests.pending.where.not(id: id).find_each(&:reject!)
+
+      if dated_loan?
+        # préstamo con fechas: el libro sigue disponible, solo se rechazan las pendientes que se cruzan
+        book.exchange_requests.pending.where.not(id: id).overlapping(start_date, end_date).find_each(&:reject!)
+      else
+        # intercambio (o préstamo antiguo sin fechas): se reserva el libro y se rechazan todas las pendientes
+        book.reserved!
+        offered_book&.reserved!
+        book.exchange_requests.pending.where.not(id: id).find_each(&:reject!)
+      end
     end
+  end
+
+  # true si es un préstamo con periodo de fechas
+  def dated_loan?
+    book.loan? && start_date.present? && end_date.present?
   end
 
   #el dueño RECHAZA: la solicitud queda rechazada y el libro sigue estando disponible
