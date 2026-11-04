@@ -21,6 +21,15 @@ usuario = User.find_or_create_by!(
   user.password_confirmation = user.password
 end
 
+# Segundo usuario de ejemplo: dueño del libro en préstamo
+prestamista = User.find_or_create_by!(
+  email: ENV.fetch("SEED_LENDER_EMAIL", "prestamista@example.com")
+) do |user|
+  user.name = "Usuario Prestamista"
+  user.password = ENV.fetch("SEED_LENDER_PASSWORD", "Prestamo123!")
+  user.password_confirmation = user.password
+end
+
 libros = [
   ["El Hobbit", "J. R. R. Tolkien", "Fantasía"],
   ["Dune", "Frank Herbert", "Ciencia ficción"],
@@ -44,6 +53,22 @@ libros.each do |titulo, autor, nombre_categoria|
     book.language = :spanish
     book.published_year = 2020
   end
+end
+
+# Libro en préstamo para mostrar el calendario de disponibilidad
+Book.find_or_create_by!(
+  user: prestamista,
+  title: "Crimen y castigo",
+  author: "Fiódor Dostoyevski"
+) do |book|
+  book.category = Category.find_by!(name: "Otros")
+  book.condition = :good
+  book.modality = :loan
+  book.status = :available
+  book.language = :spanish
+  book.published_year = 1866
+  book.available_from = Date.current
+  book.available_until = Date.current + 60
 end
 
 puts "Seeds ejecutados: #{Book.count} libros disponibles."

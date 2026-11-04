@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_03_020215) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_04_020760) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -44,6 +44,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_020215) do
 
   create_table "books", force: :cascade do |t|
     t.string "author", null: false
+    t.date "available_from"
+    t.date "available_until"
     t.bigint "category_id", null: false
     t.integer "condition", null: false
     t.datetime "created_at", null: false
@@ -73,10 +75,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_020215) do
     t.bigint "book_id", null: false
     t.datetime "completed_at"
     t.datetime "created_at", null: false
+    t.date "end_date"
     t.text "message"
     t.bigint "offered_book_id"
     t.bigint "requester_id", null: false
     t.datetime "responded_at"
+    t.date "start_date"
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["book_id"], name: "index_exchange_requests_on_book_id"

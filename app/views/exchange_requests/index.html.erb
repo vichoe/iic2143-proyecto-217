@@ -12,7 +12,7 @@
         <% if request.offered_book %>
           · ofreciste: <%= link_to request.offered_book.title, book_path(request.offered_book) %>
         <% else %>
-          · préstamo
+          · <%= loan_period_label(request) %>
         <% end %>
         · <strong><%= request_status_label(request) %></strong>
         · <%= l(request.created_at.to_date) %>
@@ -48,7 +48,7 @@
         <% if request.offered_book %>
           · ofrece: <%= link_to request.offered_book.title, book_path(request.offered_book) %>
         <% else %>
-          · préstamo
+          · <%= loan_period_label(request) %>
         <% end %>
         · <strong><%= request_status_label(request) %></strong>
         · <%= l(request.created_at.to_date) %>

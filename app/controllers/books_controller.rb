@@ -4,6 +4,7 @@ class BooksController < ApplicationController
   before_action :require_owner, only: [:edit, :update, :destroy]
 
   def show
+    @calendar_month = calendar_month_from(params[:month])
   end
 
   def new
@@ -39,6 +40,13 @@ class BooksController < ApplicationController
 
   private
 
+  # Mes a mostrar desde ?month=AAAA-MM; si no viene o es inválido, el mes actual
+  def calendar_month_from(param)
+    Date.strptime(param.to_s, "%Y-%m")
+  rescue Date::Error
+    Date.current.beginning_of_month
+  end  
+
   def set_book
     @book = Book.find(params[:id])
   end
@@ -53,7 +61,8 @@ class BooksController < ApplicationController
 
   def book_params
     params.require(:book).permit(:title, :author, :description, :publisher, :published_year, :language,
-                                 :category_id, :condition, :modality, :cover_image, photos: [])
+                                 :category_id, :condition, :modality, :cover_image, :available_from, :available_until,
+                                 photos: [] )
   end
 
   # Al editar, si no se eligen fotos nuevas se mantienen las que ya tenía.

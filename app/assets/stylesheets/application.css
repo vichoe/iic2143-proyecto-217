@@ -727,3 +727,53 @@ body {
   background-color: #fffdf7;
   color: #24364b;
 }
+
+/* CALENDARIO DE PRÉSTAMOS */
+.loan-calendar {
+  max-width: 420px;
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+}
+
+.loan-calendar__nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.loan-calendar__grid {
+  width: 100%;
+  border-spacing: 4px;
+  table-layout: fixed;
+}
+
+.calendar-day {
+  height: 36px;
+  text-align: center;
+  border-radius: 6px;
+}
+
+.calendar-day--available { background: #dff3e4; color: #1d5e2f; }
+.calendar-day--reserved { background: #f9d7df; color: #8a1c38; text-decoration: line-through; }
+.calendar-day--unavailable,
+.calendar-day--past { background: #eef1f5; color: #9aa6b5; }
+.calendar-day--outside { opacity: 0.4; }
+
+.loan-calendar__legend {
+  display: flex;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  font-size: 0.8rem;
+}
+
+.loan-calendar__legend span {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
