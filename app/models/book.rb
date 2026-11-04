@@ -69,6 +69,20 @@ class Book < ApplicationRecord
     end
   end
 
+  # Periodos [inicio, fin] de los préstamos aceptados de este libro
+  def reserved_periods
+    exchange_requests.accepted.where.not(start_date: nil).pluck(:start_date, :end_date)
+  end
+
+  # Estado de un día en el calendario: :past, :unavailable, :reserved o :available
+  def availability_on(date, reserved = reserved_periods)
+    return :past if date < Date.current
+    return :unavailable if available_from.present? && !date.between?(available_from, available_until)
+    return :reserved if reserved.any? { |from, to| date.between?(from, to) }
+
+    :available
+  end
+
   private
 
   def available_until_after_from
