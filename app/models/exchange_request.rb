@@ -17,6 +17,12 @@ class ExchangeRequest < ApplicationRecord
   validate :offered_book_is_exchange, on: :create
   validate :no_duplicate_pending_request, on: :create
   validate :loan_dates_are_valid, on: :create
+  validate :loan_dates_are_free, on: :create
+
+  # Solicitudes cuyo periodo se cruza con el periodo [from, to]
+  scope :overlapping, lambda { |from, to|
+    where("exchange_requests.start_date <= ? AND exchange_requests.end_date >= ?", to, from)
+  }
 
   # El dueño del libro solicitado.
   def owner
@@ -89,6 +95,13 @@ class ExchangeRequest < ApplicationRecord
   end
 
   private
+
+  def loan_dates_are_free
+    return if book.nil? || !book.loan? || start_date.blank? || end_date.blank?
+    return unless book.exchange_requests.accepted.overlapping(start_date, end_date).exists?
+
+    errors.add(:base, "Esas fechas ya están reservadas por otra persona")
+  end
 
   def loan_dates_are_valid
     return if book.nil? || !book.loan?
