@@ -16,6 +16,8 @@ class ExchangeRequest < ApplicationRecord
   validate :offered_book_is_available, on: :create
   validate :offered_book_is_exchange, on: :create
   validate :no_duplicate_pending_request, on: :create
+  validate :loan_dates_are_valid, on: :create
+
   # El dueño del libro solicitado.
   def owner
     book.user
@@ -87,6 +89,21 @@ class ExchangeRequest < ApplicationRecord
   end
 
   private
+
+  def loan_dates_are_valid
+    return if book.nil? || !book.loan?
+
+    if start_date.blank? || end_date.blank?
+      errors.add(:base, "Debes indicar las fechas de inicio y término del préstamo")
+    elsif end_date < start_date
+      errors.add(:end_date, "debe ser igual o posterior a la fecha de inicio")
+    elsif start_date < Date.current
+      errors.add(:start_date, "no puede ser una fecha pasada")
+    elsif book.available_from.present? &&
+          (start_date < book.available_from || end_date > book.available_until)
+      errors.add(:base, "Las fechas deben estar dentro del periodo disponible del libro")
+    end
+  end
 
   def offered_book_is_exchange
     return if offered_book.nil? || offered_book.exchange?

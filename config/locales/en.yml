@@ -49,6 +49,9 @@ en:
       book:
         available_from: "Disponible desde"
         available_until: "Disponible hasta"
+      exchange_request:
+        start_date: "Fecha de inicio"
+        end_date: "Fecha de término"
  
   errors:
     messages:
