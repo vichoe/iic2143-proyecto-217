@@ -16,6 +16,14 @@ class ExchangeRequest < ApplicationRecord
   validate :offered_book_is_available, on: :create
   validate :offered_book_is_exchange, on: :create
   validate :no_duplicate_pending_request, on: :create
+  validate :loan_dates_are_valid, on: :create
+  validate :loan_dates_are_free, on: :create
+
+  # Solicitudes cuyo periodo se cruza con el periodo [from, to]
+  scope :overlapping, lambda { |from, to|
+    where("exchange_requests.start_date <= ? AND exchange_requests.end_date >= ?", to, from)
+  }
+
   # El dueño del libro solicitado.
   def owner
     book.user
@@ -26,18 +34,27 @@ class ExchangeRequest < ApplicationRecord
     user.present? && (requester_id == user.id || book.user_id == user.id)
   end
 
-  #el dueño ACEPTA: la solicitud es aceptada y los libros involucrados quedan reservados
-  #(en proceso de transacción).
-  #las otras solicitudes pendientes por el mimso libro se rechazan porque ya no se pueden concretar:c
   def accept!
-    transaction do 
-      #si algo falla en la mitad, se deshace todo (asi no queda una soli aceptada con el libro sin reservar)
+    transaction do
+      # si algo falla en la mitad, se deshace todo
       update!(status: :accepted, responded_at: Time.current)
-      book.reserved! #el '!' lanza un error si no se puede guardar en vez de quedarse piolita fallando
-      offered_book&.reserved!
       notify_requester("#{owner.name} aceptó tu solicitud por \"#{book.title}\".")
-      book.exchange_requests.pending.where.not(id: id).find_each(&:reject!)
+
+      if dated_loan?
+        # préstamo con fechas: el libro sigue disponible, solo se rechazan las pendientes que se cruzan
+        book.exchange_requests.pending.where.not(id: id).overlapping(start_date, end_date).find_each(&:reject!)
+      else
+        # intercambio (o préstamo antiguo sin fechas): se reserva el libro y se rechazan todas las pendientes
+        book.reserved!
+        offered_book&.reserved!
+        book.exchange_requests.pending.where.not(id: id).find_each(&:reject!)
+      end
     end
+  end
+
+  # true si es un préstamo con periodo de fechas
+  def dated_loan?
+    book.loan? && start_date.present? && end_date.present?
   end
 
   #el dueño RECHAZA: la solicitud queda rechazada y el libro sigue estando disponible
@@ -87,6 +104,28 @@ class ExchangeRequest < ApplicationRecord
   end
 
   private
+
+  def loan_dates_are_free
+    return if book.nil? || !book.loan? || start_date.blank? || end_date.blank?
+    return unless book.exchange_requests.accepted.overlapping(start_date, end_date).exists?
+
+    errors.add(:base, "Esas fechas ya están reservadas por otra persona")
+  end
+
+  def loan_dates_are_valid
+    return if book.nil? || !book.loan?
+
+    if start_date.blank? || end_date.blank?
+      errors.add(:base, "Debes indicar las fechas de inicio y término del préstamo")
+    elsif end_date < start_date
+      errors.add(:end_date, "debe ser igual o posterior a la fecha de inicio")
+    elsif start_date < Date.current
+      errors.add(:start_date, "no puede ser una fecha pasada")
+    elsif book.available_from.present? &&
+          (start_date < book.available_from || end_date > book.available_until)
+      errors.add(:base, "Las fechas deben estar dentro del periodo disponible del libro")
+    end
+  end
 
   def offered_book_is_exchange
     return if offered_book.nil? || offered_book.exchange?

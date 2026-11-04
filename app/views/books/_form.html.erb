@@ -1,4 +1,4 @@
-<%= form_with model: book do |f| %>
+<%= form_with model: book, data: { controller: "loan-dates" } do |f| %>
   <% if book.errors.any? %>
     <div style="color: red;">
       <p>No se pudo guardar el libro:</p>
@@ -33,8 +33,24 @@
 
   <p>
     <%= f.label :modality, "Modalidad" %><br>
-    <%= f.select :modality, modality_options %>
+    <%= f.select :modality, modality_options, {}, 
+    data: { loan_dates_target: "modality", action: "change->loan-dates#toggle" } %>
   </p>
+
+  <%# El fieldset va fuera del <p>: un <p> no puede contener elementos de bloque, %>
+  <%# el navegador lo cerraria antes y quedaría HTML inválido %>
+
+  <fieldset data-loan-dates-target="dates">
+    <legend>Disponibilidad (solo para préstamos)</legend>
+    <p>
+      <%= f.label :available_from, "Disponible desde" %><br>
+      <%= f.date_field :available_from %>
+    </p>
+    <p>
+      <%= f.label :available_until, "Disponible hasta" %><br>
+      <%= f.date_field :available_until %>
+    </p>
+  </fieldset>
 
   <p>
     <%= f.label :description, "Descripción (opcional)" %><br>

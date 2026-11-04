@@ -11,6 +11,8 @@ module Iic2143Proyecto217
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1
 
+    config.time_zone = "Santiago"
+
     # Perfiles de usuario públicos (true) o privados (false).
     # Con false: solo el dueño y los administradores ven un perfil, y solo los admins pueden buscar usuarios.
     # Se puede cambiar sin tocar el código con la variable de entorno PUBLIC_PROFILES=false (por ejemplo, en Render).

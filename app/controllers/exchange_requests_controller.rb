@@ -113,6 +113,6 @@ end
   end
 
   def exchange_request_params
-    params.require(:exchange_request).permit(:offered_book_id, :message)
+    params.require(:exchange_request).permit(:offered_book_id, :message, :start_date, :end_date)
   end
 end

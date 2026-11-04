@@ -18,6 +18,16 @@ class Book < ApplicationRecord
   validates :title, :author, presence: true, length: { maximum: 150 }
   validates :published_year,
             numericality: { only_integer: true, less_than_or_equal_to: Date.current.year, allow_nil: true }
+  validates :available_from, :available_until, presence: true, on: :create, if: :loan?
+  # presence: true: el campo no puede venir vacío.
+  # on: :create: solo se revisa al crear el libro, no al editarlo
+  # ni al cambiarle el estado con available! o reserved!.
+  # Por eso los libros antiguos no se rompen.
+  # if: :loan?: solo aplica si la modalidad es préstamo. 
+  # loan? existe gracias al enum :modality que ya tienen en el modelo.
+
+  validate :available_until_after_from
+  before_validation :clear_dates_unless_loan
 
   scope :search, lambda { |query|
     term = "%#{sanitize_sql_like(query)}%"
@@ -57,5 +67,36 @@ class Book < ApplicationRecord
     else
       books
     end
+  end
+
+  # Periodos [inicio, fin] de los préstamos aceptados de este libro
+  def reserved_periods
+    exchange_requests.accepted.where.not(start_date: nil).pluck(:start_date, :end_date)
+  end
+
+  # Estado de un día en el calendario: :past, :unavailable, :reserved o :available
+  def availability_on(date, reserved = reserved_periods)
+    return :past if date < Date.current
+    return :unavailable if available_from.present? && !date.between?(available_from, available_until)
+    return :reserved if reserved.any? { |from, to| date.between?(from, to) }
+
+    :available
+  end
+
+  private
+
+  def available_until_after_from
+    return if available_from.blank? || available_until.blank?
+
+    if available_until < available_from
+      errors.add(:available_until, "debe ser igual o posterior a la fecha de inicio")
+    end
+  end
+
+  def clear_dates_unless_loan
+    return if loan?
+
+    self.available_from = nil
+    self.available_until = nil
   end
 end
