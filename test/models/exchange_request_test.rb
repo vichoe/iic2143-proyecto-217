@@ -29,7 +29,8 @@ class ExchangeRequestTest < ActiveSupport::TestCase
   end
 
   test "un préstamo no exige ofrecer un libro" do
-    request = ExchangeRequest.new(requester: users(:carla), book: books(:foundation))
+    request = ExchangeRequest.new(requester: users(:carla), book: books(:foundation),
+                                  start_date: Date.current + 1, end_date: Date.current + 5)
     assert request.valid?
     assert request.pending?
   end

@@ -31,7 +31,9 @@ class ExchangeRequestsControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:carla)
 
     assert_difference("ExchangeRequest.count", 1) do
-      post book_exchange_requests_path(books(:foundation)), params: { exchange_request: { message: "¡Hola!" } }
+      post book_exchange_requests_path(books(:foundation)),
+           params: { exchange_request: { message: "¡Hola!",
+                                         start_date: Date.current + 1, end_date: Date.current + 5 } }
     end
 
     request = ExchangeRequest.last
@@ -169,7 +171,8 @@ end
 
   test "al concluir un préstamo el libro vuelve a estar disponible" do
     books(:foundation).update!(modality: :loan, status: :available)
-    exchange = ExchangeRequest.create!(requester: users(:carla), book: books(:foundation), status: :accepted)
+    exchange = ExchangeRequest.create!(requester: users(:carla), book: books(:foundation), status: :accepted,
+                                       start_date: Date.current + 1, end_date: Date.current + 5)
     books(:foundation).reserved!
     sign_in users(:beto)
 
