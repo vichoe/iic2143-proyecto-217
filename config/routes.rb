@@ -5,8 +5,12 @@ Rails.application.routes.draw do
   devise_for :users
 
   resources :books, only: [:show, :new, :create, :edit, :update, :destroy] do
-    resources :exchange_requests, only: [:new, :create]
+  collection do
+    get :mine
   end
+
+  resources :exchange_requests, only: [:new, :create]
+end
 
   resources :exchange_requests, only: [:index, :show] do
     member do #'member' crea son para la solicitud en particular tal que la url lleva a su :id
