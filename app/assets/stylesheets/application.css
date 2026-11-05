@@ -891,3 +891,95 @@ body {
   outline: 3px solid #275dad;
   outline-offset: 2px;
 }
+
+/* Estantes horizontales por categoría */
+.category-shelf {
+  min-width: 0;
+  margin-bottom: 40px;
+}
+
+.category-shelf__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.category-shelf__header h3 {
+  margin: 0;
+  color: #17345c;
+  font-family: Georgia, serif;
+  font-size: 1.5rem;
+  overflow-wrap: anywhere;
+}
+
+.category-shelf__count {
+  color: #52637a;
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+}
+
+.shelf-controls {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.shelf-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #17345c;
+  border-radius: 50%;
+  background: #17345c;
+  color: #f6c945;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.shelf-arrow[hidden] {
+  display: none;
+}
+
+.shelf-arrow:hover:not(:disabled) {
+  background: #275dad;
+}
+
+.shelf-arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Sobrescribe la cuadrícula solo dentro del catálogo por categorías */
+.bookshelf.category-track {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 12px;
+  padding: 12px 0;
+  margin: 0;
+  list-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: #275dad #e5edfa;
+}
+
+.category-track > .shelf-slot {
+  flex: 0 0 220px;
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+@media (max-width: 600px) {
+  .category-track > .shelf-slot {
+    flex-basis: 170px;
+  }
+
+  .category-shelf__header h3 {
+    font-size: 1.25rem;
+  }
+}
