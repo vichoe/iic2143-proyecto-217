@@ -1,0 +1,34 @@
+<h1>Administración de publicaciones</h1>
+
+<% if @books.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Dueño</th>
+        <th>Modalidad</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @books.each do |book| %>
+        <tr id="<%= dom_id(book) %>">
+          <td><%= link_to book.title, book_path(book) %></td>
+          <td><%= link_to book.user.name, user_path(book.user) %></td>
+          <td><%= modality_label(book) %></td>
+          <td><%= status_label(book) %></td>
+          <td>
+            <% unless book.withdrawn? %>
+              <%= button_to "Retirar", admin_book_path(book),
+                            method: :delete,
+                            form: { data: { turbo_confirm: "¿Retirar esta publicación?" } } %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No hay publicaciones.</p>
+<% end %>

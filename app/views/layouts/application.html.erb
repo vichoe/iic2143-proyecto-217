@@ -41,6 +41,7 @@
 
               <% if current_user.admin? %>
                 <%= link_to "Administración", users_path %>
+                <%= link_to "Publicaciones (admin)", admin_books_path %>
               <% end %>
 
               <%= link_to "Publicar libro",
