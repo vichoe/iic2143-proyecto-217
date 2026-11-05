@@ -34,6 +34,7 @@
 
             <% if user_signed_in? %>
               <%= link_to "Mi perfil", user_path(current_user) %>
+              <%= link_to "Mis publicaciones", mine_books_path %>
               <%= link_to "Mis solicitudes", exchange_requests_path %>
               <%= link_to "Wishlist", wishlist_items_path %>
 

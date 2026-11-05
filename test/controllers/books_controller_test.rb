@@ -53,7 +53,7 @@ class BooksControllerTest < ActionDispatch::IntegrationTest
   test "eliminar marca la publicación como retirada y la saca del inicio" do
     sign_in users(:ana)
     delete book_path(books(:hobbit))
-    assert_redirected_to user_path(users(:ana))
+    assert_redirected_to mine_books_path
     assert books(:hobbit).reload.withdrawn?
 
     get root_path
