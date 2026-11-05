@@ -20,8 +20,12 @@
   <% end %>
 </div>
 
-<%= form_with model: [@exchange_request, @message], id: "nuevo-mensaje" do |f| %>
-  <%= f.text_area :body, rows: 3, required: true, maxlength: 2000, placeholder: "Escribe un mensaje..." %>
-  <br>
-  <%= f.submit "Enviar" %>
+<% if @exchange_request.chat_writable? %>
+  <%= form_with model: [@exchange_request, @message], id: "nuevo-mensaje" do |f| %>
+    <%= f.text_area :body, rows: 3, required: true, maxlength: 2000, placeholder: "Escribe un mensaje..." %>
+    <br>
+    <%= f.submit "Enviar" %>
+  <% end %>
+<% else %>
+  <p><em>La conversación está cerrada porque el intercambio terminó.</em></p>
 <% end %>

@@ -15,6 +15,9 @@ class UsersController < ApplicationController
   def show
     @books = @user.books.where(status: [:available, :reserved])
                   .order(created_at: :desc)
+    @completed_requests = @user.received_exchange_requests.completed
+                               .includes(:book)
+                               .order(completed_at: :desc)
   end
 
   def suspend

@@ -30,6 +30,10 @@ end
     end
   end
 
+  namespace :admin do
+    resources :books, only: [:index, :destroy]
+  end
+  
   resources :wishlist_items, only: [:index, :create, :edit, :update, :destroy]
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

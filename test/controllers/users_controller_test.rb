@@ -92,4 +92,12 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get users_path
     assert_response :success
   end
+
+  test "el perfil muestra el historial de transacciones concluidas" do
+    sign_in users(:beto)
+    get user_path(users(:beto))
+
+    assert_response :success
+    assert_select "#historial li", text: /Fundación/
+  end
 end
