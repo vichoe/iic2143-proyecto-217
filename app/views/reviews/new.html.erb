@@ -12,12 +12,30 @@
     </ul>
   <% end %>
 
-  <p>
-    <%= f.label :score, "Puntuación" %>
-    <%= f.select :score,
-                 (1..5).map { |n| ["★" * n, n] }.reverse,
-                 include_blank: "Elige de 1 a 5 estrellas" %>
-  </p>
+  <fieldset class="rating-field">
+    <legend>Puntuación</legend>
+
+    <p id="rating-help">
+      Elige entre 1 y 5 estrellas.
+    </p>
+
+    <div class="rating-stars">
+      <% 5.downto(1) do |number| %>
+        <%= f.radio_button :score,
+                          number,
+                          required: true,
+                          class: "rating-input",
+                          aria: { describedby: "rating-help" } %>
+
+        <%= f.label :"score_#{number}", class: "rating-star" do %>
+          <span aria-hidden="true">★</span>
+          <span class="rating-sr-only">
+            <%= number %> <%= number == 1 ? "estrella" : "estrellas" %>
+          </span>
+        <% end %>
+      <% end %>
+    </div>
+  </fieldset>
 
   <p>
     <%= f.label :comment, "Comentario" %><br>

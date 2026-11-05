@@ -1,7 +1,5 @@
 <h1>Mi lista de deseos</h1>
 
-<%= link_to "← Volver al catálogo", root_path %>
-
 <%= form_with model: WishlistItem.new,
               url: wishlist_items_path do |f| %>
   <%= f.label :title, "Título" %>

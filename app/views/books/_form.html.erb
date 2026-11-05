@@ -64,8 +64,7 @@
 
   <p>
     <%= f.label :published_year, "Año de publicación (opcional)" %><br>
-    <%= f.number_field :published_year, min: 0, max: Date.current.year %>
-  </p>
+    <%= f.number_field :published_year, min: 1, max: Date.current.year, step: 1 %>
 
   <p>
     <%= f.label :language, "Idioma (opcional)" %><br>

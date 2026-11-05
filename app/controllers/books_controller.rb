@@ -3,6 +3,10 @@ class BooksController < ApplicationController
   before_action :set_book, only: [:show, :edit, :update, :destroy]
   before_action :require_owner, only: [:edit, :update, :destroy]
 
+  def mine
+    @books = current_user.books.where.not(status: :withdrawn).with_attached_cover_image.order(created_at: :desc)
+  end
+
   def show
     @calendar_month = calendar_month_from(params[:month])
   end
@@ -36,7 +40,11 @@ class BooksController < ApplicationController
   # Así no se pierden los intercambios ni las reseñas asociadas a él.
   def destroy
     @book.withdrawn!
-    redirect_to user_path(current_user), notice: "Publicación eliminada.", status: :see_other  end
+
+    redirect_to mine_books_path,
+                notice: "Publicación eliminada.",
+                status: :see_other
+  end
 
   private
 

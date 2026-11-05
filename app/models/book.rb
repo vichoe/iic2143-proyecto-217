@@ -17,7 +17,12 @@ class Book < ApplicationRecord
 
   validates :title, :author, presence: true, length: { maximum: 150 }
   validates :published_year,
-            numericality: { only_integer: true, less_than_or_equal_to: Date.current.year, allow_nil: true }
+            numericality: {
+              only_integer: true,
+              greater_than_or_equal_to: 1,
+              less_than_or_equal_to: ->(_book) { Date.current.year }
+            },
+            allow_blank: true
   validates :available_from, :available_until, presence: true, on: :create, if: :loan?
   # presence: true: el campo no puede venir vacío.
   # on: :create: solo se revisa al crear el libro, no al editarlo

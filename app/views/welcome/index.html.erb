@@ -72,7 +72,7 @@
       <%= text_field_tag :publisher, @filters[:publisher], placeholder: "Editorial" %>
 
       <%= number_field_tag :year_from, @filters[:year_from],
-                           placeholder: "Año desde", min: 0, max: Date.current.year %>
+                           placeholder: "Año desde", min: 1, max: Date.current.year %>
       <%= number_field_tag :year_to, @filters[:year_to],
                            placeholder: "Año hasta", min: 0, max: Date.current.year %>
 
