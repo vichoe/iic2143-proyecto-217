@@ -17,7 +17,7 @@ class Message < ApplicationRecord
   end
 
   def conversation_is_open
-    return if exchange_request.nil? || exchange_request.chat_open?
-    errors.add(:base, "La conversación se habilita cuando la solicitud es aceptada")
-  end 
+    return if exchange_request.nil? || exchange_request.chat_writable?
+    errors.add(:base, "Solo puedes enviar mensajes mientras el intercambio está en proceso")
+  end
 end
