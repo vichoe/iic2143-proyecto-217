@@ -93,6 +93,11 @@ class ExchangeRequest < ApplicationRecord
     chat_open? && participant?(user)
   end 
 
+  #solo se envian mensajes cuando el intercambio esta en proceso
+  def chat_writable?
+    accepted?
+  end
+
   #la otra persona de la conversación (si soy quien pidió, el dueño; y al revés)
   def other_participant(user)
     requester == user ? owner : requester 

@@ -24,9 +24,16 @@ class MessageTest < ActiveSupport::TestCase
     assert_not message.valid?
   end
 
-  test "se puede escribir en una solicitud aceptada o completada" do
+  test "se puede escribir en una solicitud aceptada" do
+    request = exchange_requests(:beto_wants_hobbit)
+    request.status = :accepted
+    message = Message.new(exchange_request: request, sender: users(:beto), body: "Hola")
+    assert message.valid?
+  end
+
+  test "no se puede escribir en una solicitud completada" do
     message = Message.new(exchange_request: exchange_requests(:ana_borrowed_foundation),
                           sender: users(:ana), body: "Hola")
-    assert message.valid?
+    assert_not message.valid?
   end
 end

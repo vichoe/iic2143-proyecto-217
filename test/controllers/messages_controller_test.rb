@@ -8,6 +8,8 @@ class MessagesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "un participante ve los mensajes en orden cronológico" do
+    conversation.update_column(:status, ExchangeRequest.statuses[:accepted])
+
     Message.create!(exchange_request: conversation, sender: users(:beto), body:
     "Segundo", created_at: 1.hour.ago)
 
@@ -42,7 +44,7 @@ end
 
   test "un participante puede enviar un mensaje" do
     sign_in users(:ana)
-
+    conversation.update_column(:status, ExchangeRequest.statuses[:accepted])
     assert_difference("Message.count", 1) do
       post exchange_request_messages_path(conversation), params: { message: { body: "¿Nos vemos el lunes?" } }
     end
@@ -74,5 +76,13 @@ end
   test "un visitante debe iniciar sesión" do
     post exchange_request_messages_path(conversation), params: { message: { body: "Hola" } }
     assert_redirected_to new_user_session_path
+  end
+
+  test "no se puede enviar mensajes cuando el intercambio terminó" do
+    sign_in users(:ana)
+
+    assert_no_difference("Message.count") do
+      post exchange_request_messages_path(conversation), params: { message: { body: "Hola" } }
+    end
   end
 end
