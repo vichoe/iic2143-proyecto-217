@@ -134,52 +134,99 @@
     </div>
 
     <% if @books.any? %>
-      <ul class="bookshelf">
-        <% @books.each do |book| %>
-          <li class="shelf-slot">
-            <article class="shelf-book">
-              <%= link_to book_path(book),
-                          class: "book-cover-link",
-                          aria: { label: "Ver #{book.title}" } do %>
-                <% if book.cover_image.attached? %>
-                  <%= image_tag book.cover_image,
-                                alt: "",
-                                loading: "lazy",
-                                class: "book-cover-image" %>
-                <% else %>
-                  <div class="book-cover-placeholder" aria-hidden="true">
-                    <span>ENTRE LIBROS</span>
-                    <strong><%= book.title %></strong>
-                    <span><%= book.author %></span>
-                  </div>
-                <% end %>
-              <% end %>
+      <% @books_by_category.each do |category, category_books| %>
+        <section class="category-shelf"
+                 data-controller="shelf"
+                 aria-labelledby="category-title-<%= category.id %>">
 
-              <div class="book-information">
-                <span class="book-modality">
-                  <%= book.exchange? ? "Intercambio" : "Préstamo" %>
-                </span>
+          <div class="category-shelf__header">
+            <h3 id="category-title-<%= category.id %>">
+              <%= category.name %>
+              <span class="category-shelf__count">
+                (<%= category_books.size %>)
+              </span>
+            </h3>
 
-                <% if user_signed_in? && book.user_id == current_user.id %>
-                  <span class="book-owned">Tu publicación</span>
-                <% end %>
+            <div class="shelf-controls">
+              <button type="button"
+                      class="shelf-arrow"
+                      data-shelf-target="previous"
+                      data-action="shelf#previous"
+                      aria-label="Ver libros anteriores de <%= category.name %>"
+                      aria-controls="category-track-<%= category.id %>"
+                      hidden>
+                <span aria-hidden="true">←</span>
+              </button>
 
-                <h3><%= link_to book.title, book_path(book) %></h3>
-                <p class="book-author"><%= book.author %></p>
+              <button type="button"
+                      class="shelf-arrow"
+                      data-shelf-target="next"
+                      data-action="shelf#next"
+                      aria-label="Ver más libros de <%= category.name %>"
+                      aria-controls="category-track-<%= category.id %>"
+                      hidden>
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
 
-                <p class="book-owner">
-                  Publicado por
-                  <% if can_view_profile?(book.user) %>
-                    <%= link_to book.user.name, user_path(book.user) %>
-                  <% else %>
-                    <%= book.user.name %>
+          <ul class="bookshelf category-track"
+              id="category-track-<%= category.id %>"
+              data-shelf-target="track"
+              data-action="scroll->shelf#update"
+              tabindex="0"
+              aria-label="Libros de <%= category.name %>">
+
+            <% category_books.each do |book| %>
+              <li class="shelf-slot">
+                <article class="shelf-book">
+                  <%= link_to book_path(book),
+                              class: "book-cover-link",
+                              aria: { label: "Ver #{book.title}" } do %>
+                    <% if book.cover_image.attached? %>
+                      <%= image_tag book.cover_image,
+                                    alt: "",
+                                    loading: "lazy",
+                                    class: "book-cover-image" %>
+                    <% else %>
+                      <div class="book-cover-placeholder" aria-hidden="true">
+                        <span>BOOK RACK</span>
+                        <strong><%= book.title %></strong>
+                        <span><%= book.author %></span>
+                      </div>
+                    <% end %>
                   <% end %>
-                </p>
-              </div>
-            </article>
-          </li>
-        <% end %>
-      </ul>
+
+                  <div class="book-information">
+                    <span class="book-modality">
+                      <%= book.exchange? ? "Intercambio" : "Préstamo" %>
+                    </span>
+
+                    <% if user_signed_in? && book.user_id == current_user.id %>
+                      <span class="book-owned">Tu publicación</span>
+                    <% end %>
+
+                    <h3>
+                      <%= link_to book.title, book_path(book) %>
+                    </h3>
+
+                    <p class="book-author"><%= book.author %></p>
+
+                    <p class="book-owner">
+                      Publicado por
+                      <% if can_view_profile?(book.user) %>
+                        <%= link_to book.user.name, user_path(book.user) %>
+                      <% else %>
+                        <%= book.user.name %>
+                      <% end %>
+                    </p>
+                  </div>
+                </article>
+              </li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
     <% else %>
       <div class="catalog-empty">
         <h3>Este estante está esperando historias</h3>

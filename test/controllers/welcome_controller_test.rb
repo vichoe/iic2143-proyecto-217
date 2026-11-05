@@ -113,16 +113,28 @@ class WelcomeControllerTest < ActionDispatch::IntegrationTest
 
   # Escenario 1: al elegir un criterio de orden, se muestran los libros
   # ordenados según ese criterio.
-  test "escenario 1: ordena por título de la A a la Z" do
+  test "ordena por título dentro de cada estante" do
     get root_path, params: { sort: "title" }
+
     assert_response :success
 
-    dune_pos = response.body.index(book_path(books(:dune)))          # "Dune"
-    hobbit_pos = response.body.index(book_path(books(:hobbit)))      # "El Hobbit"
-    foundation_pos = response.body.index(book_path(books(:foundation))) # "Fundación"
+    category = books(:dune).category
+    track = "#category-track-#{category.id}"
 
-    assert dune_pos < hobbit_pos, "Dune debería aparecer antes que El Hobbit"
-    assert hobbit_pos < foundation_pos, "El Hobbit debería aparecer antes que Fundación"
+    assert_select "#{track} .book-information h3 a" do |links|
+      titles = links.map { |link| link.text.strip }
+
+      assert_includes titles, books(:dune).title
+      assert_includes titles, books(:foundation).title
+      assert_equal titles.sort_by(&:downcase), titles
+    end
+
+    assert_select "#{track} a[href=?]",
+                  book_path(books(:hobbit)),
+                  count: 0
+
+    assert_select "#category-track-#{books(:hobbit).category_id} a[href=?]",
+                  book_path(books(:hobbit))
   end
 
   test "escenario 1: ordena por mejor calificación del dueño del libro" do
