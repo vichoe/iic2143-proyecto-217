@@ -1,0 +1,36 @@
+<h1>Administración de reseñas</h1>
+
+<% if @reviews.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Libro</th>
+        <th>De</th>
+        <th>Para</th>
+        <th>Puntuación</th>
+        <th>Comentario</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @reviews.each do |review| %>
+        <tr id="<%= dom_id(review) %>">
+          <td><%= review.created_at.strftime("%d/%m/%Y") %></td>
+          <td><%= review.exchange_request.book.title %></td>
+          <td><%= review.reviewer.name %></td>
+          <td><%= review.reviewee.name %></td>
+          <td><%= "★" * review.score %></td>
+          <td><%= review.comment.presence || "Sin comentario" %></td>
+          <td>
+            <%= button_to "Eliminar", admin_review_path(review),
+                          method: :delete,
+                          form: { data: { turbo_confirm: "¿Eliminar esta reseña?" } } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No hay reseñas.</p>
+<% end %>

@@ -32,6 +32,7 @@ end
 
   namespace :admin do
     resources :books, only: [:index, :destroy]
+    resources :reviews, only: [:index, :destroy]
   end
   
   resources :wishlist_items, only: [:index, :create, :edit, :update, :destroy]
