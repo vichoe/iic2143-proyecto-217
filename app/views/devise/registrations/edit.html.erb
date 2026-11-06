@@ -26,7 +26,7 @@
 
     <div class="field">
       <%= f.label :avatar, "Foto de perfil (opcional)" %><br>
-      <% if resource.avatar.attached? %>
+      <% if resource.avatar.attached? && resource.avatar.attachment.persisted? %>
         <%= image_tag resource.avatar, alt: "Foto actual", style: "max-width: 80px; border-radius: 50%;" %><br>
       <% end %>
       <%= f.file_field :avatar, accept: "image/*" %>

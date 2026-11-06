@@ -74,7 +74,7 @@
       <%= number_field_tag :year_from, @filters[:year_from],
                            placeholder: "Año desde", min: 1, max: Date.current.year %>
       <%= number_field_tag :year_to, @filters[:year_to],
-                           placeholder: "Año hasta", min: 0, max: Date.current.year %>
+                           placeholder: "Año hasta", min: 1, max: Date.current.year %>
 
       <%= select_tag :language,
                      options_for_select(language_options, @filters[:language]),
