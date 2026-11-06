@@ -1,6 +1,82 @@
-Se utilizo la configuracion de Rubocop del siguiente link: https://iic2143.github.io/Setup-Guides/guides/tools/rubocop/ 
+# Book Rack · Grupo 217
 
-LINK DE RENDER: https://two026-2-grupo-217.onrender.com/ 
+Plataforma web para **intercambiar y prestar libros** entre personas de una misma comunidad, aprovechando libros que ya tienen en casa.
+
+**🔗 Aplicación en Render:** https://two026-2-grupo-217.onrender.com/
+
+## ¿Cómo funciona?
+
+Cada usuario publica los libros que quiere ofrecer, eligiendo una de dos modalidades:
+
+- **Intercambio:** el libro cambia de dueño. Quien lo pide ofrece a cambio uno de sus propios libros.
+- **Préstamo:** el libro vuelve a su dueño. El dueño indica en qué periodo está disponible y quien lo pide elige las fechas en que lo necesita.
+
+El flujo de una transacción es:
+
+1. Un usuario encuentra un libro en el catálogo y envía una **solicitud**.
+2. El dueño la **acepta o rechaza** desde *Mis solicitudes*.
+3. Al aceptarse se abre un **chat privado** para coordinar la entrega.
+4. Cuando la transacción termina, se marca como **concluida** y ambos pueden **calificarse** (1 a 5 estrellas y un comentario).
+
+## Funcionalidades
+
+| Sección | Qué se puede hacer |
+|---|---|
+| **Cuenta** | Registrarse, iniciar sesión, editar perfil y foto. Perfil público con calificaciones recibidas. |
+| **Catálogo** | Ver los libros organizados en estantes, buscar por título o autor, filtrar (categoría, estado, modalidad, idioma, año, editorial) y ordenar. |
+| **Publicaciones** | Publicar libros con portada y fotos, editarlos y eliminarlos. *Mis libros* lista las publicaciones propias. |
+| **Solicitudes** | Solicitar un libro, aceptar, rechazar y concluir. Las solicitudes enviadas y recibidas se ven en *Mis solicitudes*. |
+| **Calendario de préstamos** | En la página de un libro en préstamo se ve un calendario mensual con los días disponibles, reservados y fuera del periodo. Un mismo libro puede prestarse a varias personas en fechas que no se crucen. |
+| **Chat** | Conversación entre ambas partes mientras la transacción está activa. |
+| **Calificaciones** | Al concluir una transacción, cada parte califica a la otra. |
+| **Wishlist** | Lista de libros deseados, ya sea desde una publicación (botón ♡) o escribiendo título y autor a mano. |
+| **Notificaciones** | Aviso al solicitante cuando su solicitud es aceptada o rechazada. |
+| **Administrador** | Listar usuarios, suspender y reactivar cuentas, y gestionar (eliminar) publicaciones y calificaciones. |
+
+### Reglas importantes
+
+- No se puede solicitar un libro propio ni enviar dos solicitudes pendientes por el mismo libro.
+- En un intercambio, el libro ofrecido debe ser del solicitante y tener modalidad de intercambio.
+- En un préstamo, las fechas deben estar dentro del periodo del dueño, no pueden ser pasadas y no pueden cruzarse con otro préstamo ya aceptado.
+- Una cuenta suspendida no puede iniciar sesión.
+
+## Cómo probarlo
+
+Los seeds crean categorías, libros de ejemplo en intercambio y el libro **"Crimen y castigo"** en préstamo, publicado por un usuario de ejemplo:
+
+| Usuario | Email | Contraseña |
+|---|---|---|
+| Usuario Prestamista | `prestamista@example.com` | `Prestamo123!` |
+
+Para probar el préstamo: crea una cuenta, entra a "Crimen y castigo", revisa el calendario y solicítalo eligiendo fechas. Luego inicia sesión como el Usuario Prestamista para aceptar la solicitud desde *Mis solicitudes*.
+
+## Ejecutar en local
+
+Requisitos: Ruby 4.0, PostgreSQL y Bundler.
+
+```bash
+bundle install
+bin/rails db:create db:migrate db:seed
+bin/rails server
+```
+
+La aplicación queda en http://localhost:3000.
+
+### Tests y calidad
+
+```bash
+bin/rails test              # Minitest + SimpleCov (reporte en coverage/index.html)
+bundle exec rubocop         # estilo de código
+bin/brakeman --no-pager     # análisis de seguridad
+bin/bundler-audit           # gemas con vulnerabilidades conocidas
+```
+
+## Documentación
+
+- **Modelo E/R:** [`docs/modelo_er.png`](docs/modelo_er.png)
+- **Reglamento interno:** [`docs/reglamento_interno_IIC2143-2.pdf`](docs/reglamento_interno_IIC2143-2.pdf)
+- **Flujo de trabajo:** Gitflow (`feat/*` y `fix/*` → `develop` → `main`) con conventional commits.
+- **Configuración de Rubocop:** https://iic2143.github.io/Setup-Guides/guides/tools/rubocop/
 
 ### Uso de IA 
 
@@ -23,7 +99,7 @@ Tambien lo usamos para guiarnos con el manejo de ramas al inicio, aunque despues
 | Integrante | Uso de IA |
 |---|---|
 | Vicente | Agilizar creacion de BBDD, setup de Devise, depuración y testeos |
-| Antonella | tbd |
+| Antonella | Depuración de la conexión a PostgreSQL en WSL, tests. |
 | Isidora | tbd |
 
 #### Recursos externos utilizados
