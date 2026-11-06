@@ -3,8 +3,7 @@ class Review < ApplicationRecord
   belongs_to :reviewer, class_name: "User"
   belongs_to :reviewee, class_name: "User"
 
-  validates :score, presence: true, inclusion: { in: 1..5 }
-  validates :comment, length: { maximum: 1000 }
+  validates :score, presence: true, inclusion: { in: 1..5, allow_nil: true }  validates :comment, length: { maximum: 1000 }
   # Cada participante califica una sola vez por intercambio.
   validates :reviewer_id, uniqueness: { scope: :exchange_request_id }
   validate :reviewer_is_not_reviewee
