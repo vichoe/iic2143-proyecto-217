@@ -983,3 +983,35 @@ body {
     font-size: 1.25rem;
   }
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+#catalog-books {
+  scroll-margin-top: 110px;
+}
+
+.user-bio,
+.wishlist-item {
+  overflow-wrap: anywhere;
+}
+
+.wishlist-item > * {
+  min-width: 0;
+}
+
+.profile-edit-button {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: var(--color-navy);
+  color: #fff;
+  text-decoration: none;
+}

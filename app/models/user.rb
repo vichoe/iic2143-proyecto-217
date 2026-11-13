@@ -21,6 +21,7 @@ class User < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 50 }
   validates :bio, length: { maximum: 500 }
+  validates :city, format: { with: /\p{L}/, message: "debe contener letras" }, allow_blank: true
 
   # Buscando usuarios por nombre, no hace distinciones de mayusiculas
   scope :search, lambda { |query|

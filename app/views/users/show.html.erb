@@ -4,6 +4,7 @@
 
 <% if current_user == @user %>
   <p><em>Este es tu perfil público. Así lo ven los demás.</em></p>
+  <p><%= link_to "Editar perfil", edit_user_registration_path, class: "profile-edit-button" %></p>
 <% end %>
 
 <% if @user.city.present? %>
@@ -11,7 +12,7 @@
 <% end %>
 
 <% if @user.bio.present? %>
-  <%= simple_format @user.bio %>
+  <div class="user-bio"><%= simple_format @user.bio %></div>
 <% end %>
 
 <h2>Reputación</h2>

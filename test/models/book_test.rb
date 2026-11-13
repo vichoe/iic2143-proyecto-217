@@ -52,5 +52,13 @@ class BookTest < ActiveSupport::TestCase
     book.language = nil
     assert book.valid?
   end
-  
+
+  test "rechaza años de publicación anteriores a 1450" do
+    book = books(:hobbit)
+    book.published_year = 1
+    assert_not book.valid?
+
+    book.published_year = 1501
+    assert book.valid?
+  end
 end

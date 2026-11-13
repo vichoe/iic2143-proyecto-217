@@ -33,4 +33,13 @@ class UserTest < ActiveSupport::TestCase
     assert_in_delta 5.0, users(:beto).average_rating
     assert_nil users(:carla).average_rating
   end
+
+  test "la ciudad debe contener letras" do
+    user = users(:ana)
+    user.city = "12345"
+    assert_not user.valid?
+
+    user.city = "Viña del Mar"
+    assert user.valid?
+  end
 end

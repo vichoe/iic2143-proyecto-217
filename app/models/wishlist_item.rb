@@ -2,6 +2,5 @@ class WishlistItem < ApplicationRecord
   belongs_to :user
   belongs_to :book, optional: true
 
-  validates :title, presence: true
-  validates :author, presence: true
+  validates :title, :author, presence: true, length: { maximum: 150 }
 end
