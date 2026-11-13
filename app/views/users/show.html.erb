@@ -25,6 +25,25 @@
   <p>Todavía no tiene reseñas.</p>
 <% end %>
 
+<% if @received_reviews.any? %>
+  <h3>Comentarios recibidos</h3>
+
+  <ul>
+    <% @received_reviews.each do |review| %>
+      <li>
+        <strong><%= review.reviewer.name %></strong>
+        · <%= "★" * review.score %><%= "☆" * (5 - review.score) %>
+
+        <% if review.comment.present? %>
+          <p><%= simple_format review.comment %></p>
+        <% else %>
+          <p><em>Sin comentario.</em></p>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
 <h2>Publicaciones vigentes</h2>
 <% if @books.any? %>
   <ul>

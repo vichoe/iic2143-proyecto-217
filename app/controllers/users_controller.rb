@@ -15,13 +15,19 @@ class UsersController < ApplicationController
   def show
     @books = @user.books.where(status: [:available, :reserved])
                   .order(created_at: :desc)
+
     @completed_requests = @user.received_exchange_requests.completed
                                .includes(:book)
                                .order(completed_at: :desc)
+
+    @received_reviews = @user.received_reviews.includes(:reviewer).order(created_at: :desc)
   end
 
   def suspend
-    @user.update!(suspended_at: @user.suspended_at || Time.current)
+    @user.update!(
+      suspended_at: @user.suspended_at || Time.current,
+      suspended_reason: params[:suspended_reason].to_s.strip.presence
+    )
 
     redirect_to users_path,
                 notice: "Usuario suspendido correctamente.",
@@ -29,7 +35,10 @@ class UsersController < ApplicationController
   end
 
   def reactivate
-    @user.update!(suspended_at: nil)
+    @user.update!(
+      suspended_at: nil,
+      suspended_reason: nil
+    )
 
     redirect_to users_path,
                 notice: "Usuario reactivado correctamente.",
