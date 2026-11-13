@@ -1,5 +1,8 @@
 <% reserved = book.reserved_periods %>
-<div class="loan-calendar" id="calendario">
+<div class="loan-calendar"
+     id="calendario"
+     data-controller="loan-calendar"
+     data-loan-calendar-request-url-value="<%= new_book_exchange_request_path(book) %>">
   <div class="loan-calendar__nav">
     <%= link_to "‹ Anterior", url_for(month: month.prev_month.strftime("%Y-%m"), anchor: "calendario") %>
     <strong><%= calendar_month_title(month) %></strong>
@@ -19,8 +22,19 @@
         <tr>
           <% week.each do |date| %>
             <% state = book.availability_on(date, reserved) %>
+
             <td class="calendar-day calendar-day--<%= state %> <%= 'calendar-day--outside' unless date.month == month.month %>">
-              <%= date.day %>
+              <% if state == :available %>
+                <button type="button"
+                        class="calendar-day__button"
+                        data-loan-calendar-target="day"
+                        data-action="click->loan-calendar#select"
+                        data-date="<%= date.iso8601 %>">
+                  <%= date.day %>
+                </button>
+              <% else %>
+                <%= date.day %>
+              <% end %>
             </td>
           <% end %>
         </tr>
@@ -33,4 +47,10 @@
     <li><span class="calendar-day--reserved"></span> Reservado</li>
     <li><span class="calendar-day--unavailable"></span> No disponible</li>
   </ul>
+
+  <p class="loan-calendar__selection"
+     data-loan-calendar-target="selection"
+     aria-live="polite">
+    Selecciona un día de inicio y otro de término para solicitar el préstamo.
+  </p>
 </div>

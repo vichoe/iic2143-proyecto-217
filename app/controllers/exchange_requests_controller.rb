@@ -26,6 +26,17 @@ class ExchangeRequestsController < ApplicationController
 
   def new
     @exchange_request = @book.exchange_requests.new
+
+    if params[:start_date].present?
+      @exchange_request.start_date = Date.parse(params[:start_date])
+    end
+
+    if params[:end_date].present?
+      @exchange_request.end_date = Date.parse(params[:end_date])
+    end
+
+    load_offerable_books
+  rescue Date::Error
     load_offerable_books
   end
 

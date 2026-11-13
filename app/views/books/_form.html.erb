@@ -1,4 +1,6 @@
-<%= form_with model: book, data: { controller: "loan-dates" } do |f| %>
+<%= form_with model: book,
+              class: "book-form",
+              data: { controller: "loan-dates" } do |f| %>
   <% if book.errors.any? %>
     <div style="color: red;">
       <p>No se pudo guardar el libro:</p>
@@ -64,7 +66,11 @@
 
   <p>
     <%= f.label :published_year, "Año de publicación (opcional)" %><br>
-    <%= f.number_field :published_year, min: 1500, max: Date.current.year, step: 1 %>
+    <%= f.number_field :published_year,
+                      min: 1449,
+                      max: Date.current.year,
+                      step: 1 %>
+  </p>
 
   <p>
     <%= f.label :language, "Idioma (opcional)" %><br>

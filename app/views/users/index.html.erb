@@ -51,14 +51,19 @@
                               reactivate_user_path(user),
                               method: :patch %>
               <% else %>
-                <%= button_to "Suspender",
-                              suspend_user_path(user),
-                              method: :patch,
-                              form: {
-                                data: {
-                                  turbo_confirm: "¿Quieres suspender a este usuario?"
-                                }
+                <%= form_with url: suspend_user_path(user),
+                              method: :patch do |f| %>
+
+                  <%= f.text_area :suspended_reason,
+                                  rows: 2,
+                                  maxlength: 1000,
+                                  placeholder: "Motivo de suspensión (opcional)" %>
+
+                  <%= f.submit "Suspender",
+                              data: {
+                                turbo_confirm: "¿Quieres suspender a este usuario?"
                               } %>
+                <% end %>
               <% end %>
             <% end %>
           </td>
