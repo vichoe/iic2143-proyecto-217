@@ -49,6 +49,7 @@ en:
       book:
         available_from: "Disponible desde"
         available_until: "Disponible hasta"
+        published_year: "Año de publicación"
       exchange_request:
         start_date: "Fecha de inicio"
         end_date: "Fecha de término"
@@ -63,6 +64,9 @@ en:
       invalid: "no es válido"
       confirmation: "no coincide con %{attribute}"
       inclusion: "no es un valor válido"
+      greater_than_or_equal_to: "debe ser mayor o igual a %{count}"
+      less_than_or_equal_to: "debe ser menor o igual a %{count}"
+      not_an_integer: "debe ser un número entero"
       too_short:
         one: "debe tener al menos 1 carácter"
         other: "debe tener al menos %{count} caracteres"
