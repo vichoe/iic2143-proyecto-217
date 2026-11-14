@@ -1193,3 +1193,11 @@ html {
     grid-column: 1;
   }
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+#catalog-books {
+  scroll-margin-top: 24px;
+}
